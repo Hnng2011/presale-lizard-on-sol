@@ -39,7 +39,8 @@ const SendSolForm = () => {
     };
 
     return (
-        <div className='bg-[]'>
+        <>
+        <div className='none'>
             <div>
                 {
                     publicKey ? 
@@ -72,7 +73,11 @@ const SendSolForm = () => {
                 }
             </div>
         </div>
-        
+
+        <div className='container'>
+
+        </div>
+        </>
     )
     
 }

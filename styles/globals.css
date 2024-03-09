@@ -7,7 +7,17 @@ html {
     background-color: rgb(0, 17, 53);
 }
 
+.none {
+    display: none;
+}
+
 .navabar {
     background-color: #f8f9fa;
     border-bottom: 1px solid #e1e1e1;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
