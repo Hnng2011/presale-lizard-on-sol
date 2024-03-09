@@ -35,6 +35,18 @@ const SendSolForm = () => {
         sendTransaction(transaction, connection).then(() => { setLoading(false) }).catch((err) => { console.log(err); setLoading(false); });
     };
 
+    function formatString(total: number) {
+        var totalString = total.toString();
+        var dotIndex = totalString.indexOf('.');
+
+        if (dotIndex !== -1) {
+            var formatTotal = totalString.substring(0, dotIndex + 3);
+            return parseFloat(formatTotal);
+        } else {
+            return total;
+        }
+    }
+
     useEffect(() => {
         if (!publicKey) {
             return;
@@ -56,7 +68,7 @@ const SendSolForm = () => {
                 }
 
                 const wlData = await wl.json();
-                setWL(wlData.whitelisted);
+                setWL(Boolean(wlData));
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setWL(false);
@@ -104,8 +116,8 @@ const SendSolForm = () => {
                                 <h3>Lizard</h3>
                             </div>
                             <div className='right'>
-                                <img alt='twitter' src='' />
-                                <img alt='telegram' src='' />
+                                <img alt='twitter' src='/x.svg' />
+                                <img alt='telegram' src='/tele.svg' />
                             </div>
                         </div>
                         <div className='address'>
@@ -124,9 +136,9 @@ const SendSolForm = () => {
                 </div>
                 <div className='presaleform'>
                     <h2>Presale</h2>
-                    <h3 className='status'>Upcoming</h3>
+                    <h3 className='status'>{totalraise >= 1000 ? 'Closed' : 'Upcoming'} </h3>
                     <div className='totalraise'>
-                        <div className='totalraiseinfo'>{totalraise} / 1000 SOL</div>
+                        <div className='totalraiseinfo'>{formatString(totalraise)} / 1000 SOL</div>
                         <div className='chart' >
                             <div style={{ clipPath: `polygon(0 0, ${(totalraise / 1000) * 100}% 0, ${(totalraise / 1000) * 100}% 100%, 0 100%)` }} className='chartstatus'></div>
                         </div>
@@ -134,7 +146,7 @@ const SendSolForm = () => {
                     <form onSubmit={sendSol} className='raiseForm'>
                         <input type="text" id='amount' placeholder='e.g. 0.1' required />
                         <p>Maximum: 3 SOL</p>
-                        <button disabled={!isWl || loading} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not in WL'} </button>
+                        <button disabled={!isWl || loading} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
             </div >

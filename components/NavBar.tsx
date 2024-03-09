@@ -9,7 +9,6 @@ const ReactUIWalletMultiButtonDynamic = dynamic(
 const NavBar: FC = () => {
     return (
         <div className="navbar">
-            <button className="checkwl">Check WL</button>
             <ReactUIWalletMultiButtonDynamic />
         </div>
     )
