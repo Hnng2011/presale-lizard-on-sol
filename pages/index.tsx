@@ -13,13 +13,13 @@ export default function Home() {
         <title>Presale Lizard</title>
         <meta
           name='description'
-          content='Wallet Adapter Example'
+          content='Presale Lizard'
         />
         <link rel='icon' href='/fvc.png' />
       </Head>
       <WalletContextProvider>
-          <NavBar />
-          <SendSolForm />
+        <NavBar />
+        <SendSolForm />
       </WalletContextProvider>
     </>
   )

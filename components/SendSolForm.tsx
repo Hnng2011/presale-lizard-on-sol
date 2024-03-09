@@ -49,6 +49,7 @@ const SendSolForm = () => {
 
     useEffect(() => {
         if (!publicKey) {
+            setWL(false);
             return;
         }
 
