@@ -76,7 +76,7 @@ const SendSolForm = () => {
 
         <div className='container'>
             <div className='informpresale'>
-                <img src='/images/Presale.png' alt='Presale' />
+                <img src='../assets/social.jpg' alt='Presale' />
                 <div className='inform'>
                     <div className='social'>
 
