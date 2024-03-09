@@ -6,6 +6,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 
 const SendSolForm = () => {
     const [isWl, setWL] = useState(false)
+    const [isKol, setKOL] = useState(false)
     const [totalraise, setTotalRaise] = useState(0)
     const [loading, setLoading] = useState(false)
     const { connection } = useConnection();
@@ -16,7 +17,11 @@ const SendSolForm = () => {
         setSliderValue(parseFloat(e.target.value));
     };
 
-    const marks = [
+    const marks = isKol ? [
+        { value: 0, label: '0' },
+        { value: 1, label: '0.5' },
+        { value: 2, label: '1' },
+    ] : [
         { value: 0, label: '0' },
         { value: 1, label: '0.5' },
         { value: 2, label: '1' },
@@ -83,7 +88,9 @@ const SendSolForm = () => {
                     throw new Error(`HTTP error! Status: ${wl.status}`);
                 }
 
+
                 const wlData = await wl.json();
+                setKOL(Boolean(wlData.isKOL));
                 setWL(Boolean(wlData));
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -155,6 +162,7 @@ const SendSolForm = () => {
                 <div className='presaleform'>
                     <h2>Presale</h2>
                     <h3 className='status'>{totalraise >= 1000 ? 'Closed' : 'Upcoming'} </h3>
+                    <h2>Phase 1</h2>
                     <div className='totalraise'>
                         <div className='totalraiseinfo'>{formatString(totalraise)} / 1000 SOL</div>
                         <div className='chart' >
