@@ -15,7 +15,7 @@ export default function Home() {
           name='description'
           content='Wallet Adapter Example'
         />
-        <link rel='icon' href='/favicon.ico' />
+        <link rel='icon' href='/fvc.png' />
       </Head>
       <WalletContextProvider>
           <NavBar />
