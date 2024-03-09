@@ -1,7 +1,7 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 
 
 const SendSolForm = () => {
@@ -10,6 +10,21 @@ const SendSolForm = () => {
     const [loading, setLoading] = useState(false)
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
+    const [sliderValue, setSliderValue] = useState(0);
+
+    const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setSliderValue(parseFloat(e.target.value));
+    };
+
+    const marks = [
+        { value: 0, label: '0' },
+        { value: 1, label: '0.5' },
+        { value: 2, label: '1' },
+        { value: 3, label: '1.5' },
+        { value: 4, label: '2' },
+        { value: 5, label: '2.5' },
+        { value: 6, label: '3' },
+    ];
 
     const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -110,6 +125,7 @@ const SendSolForm = () => {
         <>
             <div className='container'>
                 <div className='informpresale'>
+                    <img className='imgSocial' src='/social.jpg' alt='Presale' />
                     <div className='inform'>
                         <div className='social'>
                             <div className='left'>
@@ -146,13 +162,27 @@ const SendSolForm = () => {
                         </div>
                     </div>
                     <form onSubmit={sendSol} className='raiseForm'>
-                        <input type="text" id='amount' placeholder='e.g. 0.1' required />
+                        <input disabled type="text" id='amount' required value={sliderValue} />
+                        <input
+                            className="slider"
+                            type="range"
+                            min={0}
+                            max={3}
+                            step={0.5}
+                            value={sliderValue}
+                            onChange={handleSliderChange}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontFamily: 'MemeFont2' }}>
+                            {marks.map((mark) => (
+                                <div style={{ color: 'black', width: '25px', textAlign: 'center' }} key={mark.value}>{mark.label}</div>
+                            ))}
+                        </div>
                         <p>Maximum: 3 SOL</p>
                         <button disabled={!isWl || loading} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
             </div >
-            <img className='imgSocial' src='/social.jpg' alt='Presale' />
+
         </>
     )
 
