@@ -40,7 +40,7 @@ const SendSolForm = () => {
 
     return (
         <>
-        <div >
+        <div className='none'>
             <div>
                 {
                     publicKey ? 
@@ -97,7 +97,8 @@ const SendSolForm = () => {
                     <div className='chart'></div>
                 </div>
                 <div className='raiseForm'>
-                    <input type='text' placeholder='1' />
+                    <input type='text' placeholder='1' id='lamports'/>
+                    <button>Contribute</button>
                 </div>
             </div>
         </div>
