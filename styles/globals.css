@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: 'MemeFont';
+    src: url('../assets/fonts/PermanentMarker-Regular.ttf') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MemeFont2';
+    src: url('../assets/fonts/fugaz-one-latin-400-normal.ttf') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 
 html {
     background-color: aqua;
@@ -10,6 +23,18 @@ html {
 * {
     color: white;
 }
+
+.wallet-adapter-button-trigger {
+    background-color: pink !important;
+    color: black !important;
+    border: 2px solid black !important;
+    transition: 0.5s ease-out;
+}
+
+.wallet-adapter-button-trigger:hover {
+    background-color: rgb(255, 116, 139) !important;
+}
+
 
 .none {
     display: none;
@@ -32,19 +57,220 @@ html {
     display: flex;
     justify-content: space-between;
     align-items: start;
+    gap: 24px;
 }
 
 .informpresale {
-    width: 100%;
-    aspect-ratio: 4/3;
+    flex: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.informpresale,
-.presaleform {
+.informpresale img {
+    overflow: hidden;
     border-radius: 15px;
-    flex: 1;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: 4px solid rgb(46, 46, 46);
+}
+
+.inform {
+    border-radius: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    background-color: pink;
+    border: 4px solid rgb(46, 46, 46);
     gap: 24px;
-    background-color: rgba(255, 192, 203, 0.8);
+}
+
+.presaleform {
+    border: 4px solid rgb(46, 46, 46);
+    overflow: hidden;
+    border-radius: 15px;
+    flex: 0.8;
+    background-color: pink;
     backdrop-filter: blur(10px);
     --webkit-backdrop-filter: blur(10px);
+    gap: 24px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.social {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left {
+    align-items: center;
+    display: flex;
+    font-size: 2rem;
+    font-family: 'MemeFont', sans-serif;
+    font-weight: 700;
+    gap: 12px;
+}
+
+.left h3 {
+    color: black;
+}
+
+.left video {
+    width: 60px;
+}
+
+.right {
+    display: flex;
+    gap: 12px;
+}
+
+.right img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.address {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.address h3 {
+    font-family: 'MemeFont', sans-serif;
+    color: black;
+    font-size: 1.5rem;
+}
+
+.address p {
+    font-family: 'MemeFont2', sans-serif;
+    font-size: 1.2rem;
+    color: white;
+    background-color: rgba(128, 128, 128, 0.808);
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.about {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.about p {
+    color: black;
+    font-family: 'MemeFont2', sans-serif;
+    font-size: 1rem;
+}
+
+
+.presaleform h2 {
+    font-family: 'MemeFont', sans-serif;
+    font-size: 2rem;
+    color: black;
+}
+
+.presaleform h3 {
+    font-family: 'MemeFont2', sans-serif;
+    font-size: 1.5rem;
+    color: white;
+    padding: 6px 12px;
+    background: rgba(0, 128, 0, 0.8);
+    width: fit-content;
+    border-radius: 20px;
+}
+
+.totalraise {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+    align-items: end;
+
+}
+
+.totalraiseinfo {
+    font-family: 'MemeFont2', sans-serif;
+    color: black;
+}
+
+.chart {
+    height: 20px;
+    width: 100%;
+    border-radius: 15px;
+    border: 3px solid black;
+    overflow: hidden;
+    display: flex;
+
+}
+
+.chartstatus {
+    clip-path: polygon(0 0, 40% 0, 40% 100%, 0 100%);
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(90deg, transparent 0%, transparent 10%, rgb(136, 77, 136) 10%, rgb(136, 77, 136) 20%, transparent 20%, transparent 30%, rgb(136, 77, 136) 30%, rgb(136, 77, 136) 40%, transparent 40%, transparent 50%, rgb(136, 77, 136) 50%, rgb(136, 77, 136) 60%, transparent 60%, transparent 70%, rgb(136, 77, 136) 70%, rgb(136, 77, 136) 80%, transparent 80%, transparent 90%, rgb(136, 77, 136) 90%, rgb(136, 77, 136) 100%);
+    background-color: purple;
+    background-size: 200% 100%;
+    animation: process 3s linear infinite;
+}
+
+@keyframes process {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+.raiseForm {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 12px;
+}
+
+input {
+    padding: 6px;
+    border-radius: 12px;
+    background-color: rgb(51, 51, 51);
+    border: 2px solid white;
+    font-size: 1.3rem;
+    width: 100%;
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.267);
+}
+
+.raiseForm p {
+    font-family: 'Memefont2', sans-serif;
+    color: black;
+}
+
+.raiseForm button {
+    font-family: 'MemeFont2', sans-serif;
+    background: white;
+    color: black;
+    padding: 6px;
+    border-radius: 10px;
+    font-size: 1.6rem;
+    width: 100%;
+    transition: 0.5s ease-out;
+}
+
+.raiseForm button:hover {
+    background-color: rgb(43, 43, 43);
+}
+
+.raiseForm button:disabled {
+    background-color: gray;
+    opacity: 0.5;
 }
