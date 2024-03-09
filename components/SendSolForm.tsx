@@ -1,7 +1,7 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { FC, useState } from 'react'
+import { useState } from 'react'
 
 
 const SendSolForm = () => {
@@ -75,7 +75,10 @@ const SendSolForm = () => {
         </div>
 
         <div className='container'>
-
+            <div className='informpresale'>
+                <img src='/images/Presale.png' alt='Presale' />
+            </div>
+            <div className='presaleform'></div>
         </div>
         </>
     )

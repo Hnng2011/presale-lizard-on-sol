@@ -10,11 +10,12 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>SolTransfer</title>
+        <title>Presale Lizard</title>
         <meta
           name='description'
           content='Wallet Adapter Example'
         />
+        <link rel='icon' href='/favicon.ico' />
       </Head>
       <WalletContextProvider>
           <NavBar />

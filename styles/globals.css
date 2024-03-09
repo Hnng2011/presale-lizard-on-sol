@@ -17,11 +17,15 @@ html {
     justify-content: end;
     background-color: transparent;
     padding: 24px;
-    border-bottom: 1px solid #e1e1e1;
+    margin: 0 auto;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
