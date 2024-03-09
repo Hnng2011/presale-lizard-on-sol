@@ -19,16 +19,13 @@ const SendSolForm = () => {
 
     const marks = isKol ? [
         { value: 0, label: '0' },
-        { value: 1, label: '0.5' },
-        { value: 2, label: '1' },
+        { value: 1, label: '1' },
     ] : [
-        { value: 0, label: '0' },
-        { value: 1, label: '0.5' },
-        { value: 2, label: '1' },
-        { value: 3, label: '1.5' },
-        { value: 4, label: '2' },
-        { value: 5, label: '2.5' },
-        { value: 6, label: '3' },
+        { value: 1, label: '1' },
+        { value: 2, label: '1.5' },
+        { value: 3, label: '2' },
+        { value: 4, label: '2.5' },
+        { value: 5, label: '3' },
     ];
 
     const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
@@ -155,14 +152,14 @@ const SendSolForm = () => {
                             <p>Lizard Presale</p>
                             <p>Symbol: $LIZA</p>
                             <p>Supply: 1,000,000,000 $LIZA</p>
-                            <p>Hardcap: 1500 SOL</p>
+                            <p>Hardcap: 1000 SOL</p>
                         </div>
                     </div>
                 </div>
                 <div className='presaleform'>
                     <h2>Presale</h2>
                     <h3 className='status'>{totalraise >= 1000 ? 'Closed' : 'Upcoming'} </h3>
-                    <h2>Phase 1</h2>
+                    <h2>KOL Round</h2>
                     <div className='totalraise'>
                         <div className='totalraiseinfo'>{formatString(totalraise)} / 1000 SOL</div>
                         <div className='chart' >
@@ -174,7 +171,7 @@ const SendSolForm = () => {
                         <input
                             className="slider"
                             type="range"
-                            min={0}
+                            min={1}
                             max={3}
                             step={0.5}
                             value={sliderValue}
@@ -185,7 +182,10 @@ const SendSolForm = () => {
                                 <div style={{ color: 'black', width: '25px', textAlign: 'center' }} key={mark.value}>{mark.label}</div>
                             ))}
                         </div>
-                        <p>Maximum: 3 SOL</p>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <p>Min: 1 SOL</p>
+                            <p>Max: 3 SOL</p>
+                        </div>
                         <button disabled={!isWl || loading || sliderValue === 0} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
