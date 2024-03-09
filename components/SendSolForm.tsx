@@ -116,9 +116,9 @@ const SendSolForm = () => {
                             <p>
                                 In the real world, it transformed into everything from keychains to memes, a playful reminder of the thrilling alliances and betrayals that unfolded in the virtual spaces it touched.</p>
                             <p>Lizard Presale</p>
-                            <p>Symbol: AmongUs</p>
-                            <p>Supply: 1,000,000,000</p>
-                            <p>Hardcap: 500 SOL</p>
+                            <p>Symbol: $LIZA</p>
+                            <p>Supply: 1,000,000,000 $LIZA</p>
+                            <p>Hardcap: 1500 SOL</p>
                         </div>
                     </div>
                 </div>
