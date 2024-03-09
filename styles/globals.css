@@ -4,7 +4,11 @@
 
 
 html {
-    background-color: rgb(0, 17, 53);
+    background-color: aqua;
+}
+
+* {
+    color: white;
 }
 
 .none {
@@ -28,4 +32,13 @@ html {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.informpresale,
+.presaleform {
+    flex: 1;
+    gap: 24px;
+    background-color: rgba(255, 192, 203, 0.63);
+    backdrop-filter: blur(10px);
+    --webkit-backdrop-filter: blur(10px);
 }
