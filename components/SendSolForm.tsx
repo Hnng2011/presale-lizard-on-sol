@@ -77,8 +77,26 @@ const SendSolForm = () => {
         <div className='container'>
             <div className='informpresale'>
                 <img src='/images/Presale.png' alt='Presale' />
+                <div className='inform'>
+                    <div className='social'>
+
+                    </div>
+                    <div className='address'>
+
+                    </div>
+                    <div className='about'>
+
+                    </div>
+                </div>
             </div>
-            <div className='presaleform'></div>
+            <div className='presaleform'>
+                <h2>Presale</h2>
+                <h3 className='status'></h3>
+                <div className='totalraise'>
+                    <div className='totalraiseinfo'>0 / 1000 SOL</div>
+                    <div className='chart'></div>
+                </div>
+            </div>
         </div>
         </>
     )
