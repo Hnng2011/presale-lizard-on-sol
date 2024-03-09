@@ -186,7 +186,7 @@ const SendSolForm = () => {
                             ))}
                         </div>
                         <p>Maximum: 3 SOL</p>
-                        <button disabled={!isWl || loading} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
+                        <button disabled={!isWl || loading || sliderValue === 0} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
             </div >
