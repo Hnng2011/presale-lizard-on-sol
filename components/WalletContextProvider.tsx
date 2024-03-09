@@ -1,18 +1,27 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode , useMemo , useCallback} from 'react';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { WalletModalProvider  } from "@solana/wallet-adapter-react-ui";
+import { WalletAdapterNetwork , Adapter } from '@solana/wallet-adapter-base';
+import {PhantomWalletAdapter} from '@solana/wallet-adapter-wallets';
+import { type SolanaSignInInput } from '@solana/wallet-standard-features';
 import * as web3 from '@solana/web3.js'
-import * as walletAdapterWallets from '@solana/wallet-adapter-wallets';
+import { verifySignIn } from '@solana/wallet-standard-util';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 
 const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const endpoint = web3.clusterApiUrl("devnet")
-    const wallets = [new walletAdapterWallets.PhantomWalletAdapter()]
-    
+    const network = WalletAdapterNetwork.Devnet;
+    const endpoint = web3.clusterApiUrl(network);
+    const wallets = useMemo(
+        () => [
+            new PhantomWalletAdapter(),
+        ],
+        [network]
+    );
+
     return (
         <ConnectionProvider endpoint={endpoint}>
-            <WalletProvider wallets={wallets}>
+            <WalletProvider wallets={wallets}  autoConnect={true}>
                 <WalletModalProvider>
                     {children}
                 </WalletModalProvider>

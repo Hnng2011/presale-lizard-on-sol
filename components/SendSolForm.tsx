@@ -13,25 +13,30 @@ const SendSolForm = () => {
     }
 
     const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!connection || !publicKey) {
-            return 
-        }
-
-        const transaction = new web3.Transaction();
-        const recipientPubKey = new web3.PublicKey(event.target.recipient.value)
-
-        const sendSolInstruction = web3.SystemProgram.transfer({
-            fromPubkey: publicKey,
-            toPubkey: recipientPubKey,
-            lamports: LAMPORTS_PER_SOL * event.target.amount.value
-        })
-
-        transaction.add(sendSolInstruction)
-        sendTransaction(transaction, connection).then((sig) => {
-            setTxSig(sig)
-        })
+    event.preventDefault();
+    if (!connection || !publicKey) {
+        return;
     }
+
+    const target = event.target as typeof event.target & {
+        recipient: { value: string };
+        amount: { value: string };
+    };
+
+    const transaction = new web3.Transaction();
+    const recipientPubKey = new web3.PublicKey(target.recipient.value);
+
+    const sendSolInstruction = web3.SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: recipientPubKey,
+        lamports: LAMPORTS_PER_SOL * parseFloat(target.amount.value)
+    });
+
+    transaction.add(sendSolInstruction);
+    sendTransaction(transaction, connection).then((sig) => {
+        setTxSig(sig);
+    });
+    };
 
     return (
         <div className='bg-[]'>
