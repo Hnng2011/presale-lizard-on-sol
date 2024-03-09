@@ -77,7 +77,6 @@ const SendSolForm = () => {
 
             <div className='container'>
                 <div className='informpresale'>
-                    <img src='/social.jpg' alt='Presale' />
                     <div className='inform'>
                         <div className='social'>
                             <div className='left'>
@@ -119,6 +118,7 @@ const SendSolForm = () => {
                     </div>
                 </div>
             </div>
+            <img className='imgSocial' src='/social.jpg' alt='Presale' />
         </>
     )
 
