@@ -40,7 +40,7 @@ const SendSolForm = () => {
 
     return (
         <>
-        <div className='none'>
+        <div >
             <div>
                 {
                     publicKey ? 
@@ -91,10 +91,13 @@ const SendSolForm = () => {
             </div>
             <div className='presaleform'>
                 <h2>Presale</h2>
-                <h3 className='status'></h3>
+                <h3 className='status'>Upcoming</h3>
                 <div className='totalraise'>
                     <div className='totalraiseinfo'>0 / 1000 SOL</div>
                     <div className='chart'></div>
+                </div>
+                <div className='raiseForm'>
+                    <input type='text' placeholder='1' />
                 </div>
             </div>
         </div>
