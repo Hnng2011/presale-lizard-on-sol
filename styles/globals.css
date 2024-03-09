@@ -38,7 +38,7 @@ html {
 .presaleform {
     flex: 1;
     gap: 24px;
-    background-color: rgba(255, 192, 203, 0.63);
+    background-color: rgba(255, 192, 203, 0.8);
     backdrop-filter: blur(10px);
     --webkit-backdrop-filter: blur(10px);
 }
