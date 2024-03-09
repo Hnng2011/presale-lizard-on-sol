@@ -116,8 +116,9 @@ const SendSolForm = () => {
                                 <h3>Lizard</h3>
                             </div>
                             <div className='right'>
-                                <img alt='twitter' src='/x.svg' />
-                                <img alt='telegram' src='/tele.svg' />
+                                <a href={process.env.NEXT_PUBLIC_PUBLIC_WEB} target='_blank'><img alt='web' src='/web.png' /></a>
+                                <a href={process.env.NEXT_PUBLIC_PUBLIC_X} target='_blank'><img alt='twitter' src='/x.svg' /></a>
+                                <a href={process.env.NEXT_PUBLIC_PUBLIC_TELE} target='_blank'><img alt='telegram' src='/tele.svg' /></a>
                             </div>
                         </div>
                         <div className='address'>

@@ -292,3 +292,31 @@ input::placeholder {
     border-radius: 4px;
     color: black;
 }
+
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 0 0;
+    }
+
+    .informpresale {
+        width: calc(100% - 24px);
+        margin: 0 12px;
+    }
+
+    .presaleform {
+        width: calc(100% - 24px);
+        margin: 0 12px;
+    }
+
+    .imgSocial {
+        max-width: 100%;
+    }
+
+    .imgSocial {
+        border: none;
+        border-radius: 0;
+        margin-bottom: 0;
+    }
+}
