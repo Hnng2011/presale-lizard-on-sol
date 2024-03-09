@@ -1,31 +1,29 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 
 const SendSolForm = () => {
     const [isWl, setWL] = useState(false)
-    const [txSig, setTxSig] = useState('')
+    const [totalraise, setTotalRaise] = useState(0)
+    const [loading, setLoading] = useState(false)
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
-    const link = () => {
-        return txSig ? `https://explorer.solana.com/tx/${txSig}?cluster=devnet` : ''
-    }
 
     const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setLoading(true)
         if (!connection || !publicKey) {
             return;
         }
 
         const target = event.target as typeof event.target & {
-            recipient: { value: string };
             amount: { value: string };
         };
 
         const transaction = new web3.Transaction();
-        const recipientPubKey = new web3.PublicKey(target.recipient.value);
+        const recipientPubKey = new web3.PublicKey(process.env.NEXT_PUBLIC_PUBLIC_WALLET as string);
 
         const sendSolInstruction = web3.SystemProgram.transfer({
             fromPubkey: publicKey,
@@ -34,47 +32,69 @@ const SendSolForm = () => {
         });
 
         transaction.add(sendSolInstruction);
-        sendTransaction(transaction, connection).then((sig) => {
-            setTxSig(sig);
-        });
+        sendTransaction(transaction, connection).then(() => { setLoading(false) }).catch((err) => { console.log(err); setLoading(false); });
     };
+
+    useEffect(() => {
+        if (!publicKey) {
+            return;
+        }
+
+        const urlWL = `${process.env.NEXT_PUBLIC_API_URL as String}/checkwl?address=${publicKey.toBase58()}`;
+        const checkWL = async () => {
+            try {
+                const wl = await fetch(urlWL, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (!wl.ok) {
+                    setWL(false);
+                    throw new Error(`HTTP error! Status: ${wl.status}`);
+                }
+
+                const wlData = await wl.json();
+                setWL(wlData.whitelisted);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setWL(false);
+            }
+        }
+        checkWL();
+
+    }, [publicKey])
+
+    useEffect(() => {
+        const urlTR = `${process.env.NEXT_PUBLIC_API_URL as String}/totalraise`;
+        const checkTotalraise = async () => {
+            try {
+                const totalraise = await fetch(urlTR, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (!totalraise.ok) {
+                    setTotalRaise(0);
+                    throw new Error(`HTTP error! Status: ${totalraise.status}`);
+                }
+
+                const totalraiseData = await totalraise.json();
+                setTotalRaise(totalraiseData.totalCurrentBuy);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setTotalRaise(0);
+            }
+        }
+
+        !loading && checkTotalraise();
+    }, [loading])
 
     return (
         <>
-            <div className='none'>
-                <div>
-                    {
-                        publicKey ?
-                            <form onSubmit={sendSol} className='flex flex-col justify-center items-center mt-24 mx-auto max-w-md'>
-                                <div className="mb-6">
-                                    <label htmlFor="amount" className='block mb-2 text-lg font-medium text-gray-800'>Amount (in SOL) to Send:</label>
-                                    <input type="text" id='amount' placeholder='e.g. 0.1' required className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-[#512da8]' />
-                                </div>
-
-                                <div className="mb-6">
-                                    <label htmlFor="recipient" className='block mb-2 text-lg font-medium text-gray-800'>Send SOL to:</label>
-                                    <input type="text" id='recipient' placeholder='e.g. 4Zw1fXuYuJhWhu9KLEYMhiPEiqcpKd6akw3WRZCv84HA' required className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-[#512da8]' />
-                                </div>
-
-                                <button type="submit" className='bg-black text-white px-4 py-2 rounded-lg hover:bg-[#512da8] transition duration-300 ease-in-out'>Send</button>
-                            </form>
-
-                            :
-                            <div className='flex justify-center items-center text-gray-800 font-bold text-xl mt-60 mr-20'>
-                                <p>Connect Your Wallet</p>
-                            </div>
-                    }
-                    {
-                        txSig ?
-                            <div className='flex justify-center items-center mt-4'>
-                                <p className='text-gray-800 font-normal'>View your transaction on- </p>
-                                <a href={link()} className='text-gray-800 font-normal hover:text-[#512da8]'>Solana Explorer 🚀</a>
-                            </div> :
-                            null
-                    }
-                </div>
-            </div>
-
             <div className='container'>
                 <div className='informpresale'>
                     <div className='inform'>
@@ -90,7 +110,7 @@ const SendSolForm = () => {
                         </div>
                         <div className='address'>
                             <h3>Token Address: </h3>
-                            <p>DQtTeBBMeC...ypxfkp89FWHcrG</p>
+                            <p>TBA</p>
                         </div>
                         <div className='about'>
                             <p>
@@ -106,18 +126,18 @@ const SendSolForm = () => {
                     <h2>Presale</h2>
                     <h3 className='status'>Upcoming</h3>
                     <div className='totalraise'>
-                        <div className='totalraiseinfo'>0 / 1000 SOL</div>
-                        <div className='chart'>
-                            <div className='chartstatus'></div>
+                        <div className='totalraiseinfo'>{totalraise} / 1000 SOL</div>
+                        <div className='chart' >
+                            <div style={{ clipPath: `polygon(0 0, ${(totalraise / 1000) * 100}% 0, ${(totalraise / 1000) * 100}% 100%, 0 100%)` }} className='chartstatus'></div>
                         </div>
                     </div>
-                    <div className='raiseForm'>
-                        <input type='text' placeholder='1' id='lamports' />
-                        <p>Maximum: 10 SOL</p>
-                        <button disabled={!isWl}> {isWl ? 'Contribute' : 'You are not WL'} </button>
-                    </div>
+                    <form onSubmit={sendSol} className='raiseForm'>
+                        <input type="text" id='amount' placeholder='e.g. 0.1' required />
+                        <p>Maximum: 3 SOL</p>
+                        <button disabled={!isWl || loading} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not in WL'} </button>
+                    </form>
                 </div>
-            </div>
+            </div >
             <img className='imgSocial' src='/social.jpg' alt='Presale' />
         </>
     )
