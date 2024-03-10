@@ -6,20 +6,19 @@ import { ChangeEvent, useEffect, useState } from 'react'
 
 const SendSolForm = () => {
     const [isWl, setWL] = useState(false)
-    const [isKol, setKOL] = useState(false)
+    const [isKol, setKOL] = useState(true)
     const [totalraise, setTotalRaise] = useState(0)
     const [loading, setLoading] = useState(false)
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
-    const [sliderValue, setSliderValue] = useState(0);
+    const [sliderValue, setSliderValue] = useState(1);
 
     const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSliderValue(parseFloat(e.target.value));
     };
 
     const marks = isKol ? [
-        { value: 0, label: '0' },
-        { value: 1, label: '1' },
+        { value: 0, label: '1' },
     ] : [
         { value: 1, label: '1' },
         { value: 2, label: '1.5' },
@@ -88,6 +87,7 @@ const SendSolForm = () => {
 
                 const wlData = await wl.json();
                 setKOL(Boolean(wlData.isKOL));
+                Boolean(wlData.isKOL) && setSliderValue(1)
                 setWL(Boolean(wlData));
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -159,7 +159,7 @@ const SendSolForm = () => {
                 <div className='presaleform'>
                     <h2>Presale</h2>
                     <h3 className='status'>{totalraise >= 1000 ? 'Closed' : 'Upcoming'} </h3>
-                    <h2>KOL Round</h2>
+                    <h2>Granduted Round</h2>
                     <div className='totalraise'>
                         <div className='totalraiseinfo'>{formatString(totalraise)} / 1000 SOL</div>
                         <div className='chart' >
@@ -171,8 +171,8 @@ const SendSolForm = () => {
                         <input
                             className="slider"
                             type="range"
-                            min={1}
-                            max={3}
+                            min={marks[0].value}
+                            max={marks[marks.length - 1].value}
                             step={0.5}
                             value={sliderValue}
                             onChange={handleSliderChange}
@@ -183,8 +183,8 @@ const SendSolForm = () => {
                             ))}
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                            <p>Min: 1 SOL</p>
-                            <p>Max: 3 SOL</p>
+                            <p>Min: {marks[0].label} SOL</p>
+                            <p>Max: {marks[marks.length - 1].label} SOL</p>
                         </div>
                         <button disabled={!isWl || loading || sliderValue === 0} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
