@@ -171,8 +171,8 @@ const SendSolForm = () => {
                         <input
                             className="slider"
                             type="range"
-                            min={marks[0].value}
-                            max={marks[marks.length - 1].value}
+                            min={1}
+                            max={isKol ? 1 : 3}
                             step={0.5}
                             value={sliderValue}
                             onChange={handleSliderChange}
