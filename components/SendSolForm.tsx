@@ -86,10 +86,9 @@ const SendSolForm = () => {
 
 
                 const wlData = await wl.json();
-                console.log(wlData);
                 setKOL(Boolean(wlData.isKOL));
                 Boolean(wlData.isKOL) && setSliderValue(1)
-                setWL(Boolean(wlData));
+                setWL(Boolean(wlData?.address));
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setWL(false);
