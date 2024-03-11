@@ -86,6 +86,7 @@ const SendSolForm = () => {
 
 
                 const wlData = await wl.json();
+                console.log(wlData);
                 setKOL(Boolean(wlData.isKOL));
                 Boolean(wlData.isKOL) && setSliderValue(1)
                 setWL(Boolean(wlData));
