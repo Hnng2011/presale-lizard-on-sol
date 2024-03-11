@@ -4,7 +4,9 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { ChangeEvent, useEffect, useState } from 'react'
 
 
+
 const SendSolForm = () => {
+    const phase: number = 2;
     const [isWl, setWL] = useState(false)
     const [isKol, setKOL] = useState(true)
     const [totalraise, setTotalRaise] = useState(0)
@@ -13,11 +15,48 @@ const SendSolForm = () => {
     const { publicKey, sendTransaction } = useWallet();
     const [sliderValue, setSliderValue] = useState(1);
 
+
     const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSliderValue(parseFloat(e.target.value));
     };
 
-    const marks = isKol ? [
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const parsedValue = parseFloat(e.target.value);
+        let result = 0;
+        if (phase === 1) {
+            result = 3;
+        } else if (isKol) {
+            result = 1;
+        } else {
+            result = 15;
+        }
+
+        if (parsedValue > result) {
+            setSliderValue(result);
+        }
+
+        else if (parsedValue < 1 || isNaN(parsedValue)) {
+            setSliderValue(1);
+        }
+
+        else {
+            setSliderValue(parsedValue);
+        }
+    };
+
+
+
+
+    const marks = phase !== 1 ? [
+        { value: 0, label: '1' },
+        { value: 1, label: '3' },
+        { value: 2, label: '5' },
+        { value: 3, label: '7' },
+        { value: 4, label: '9' },
+        { value: 5, label: '11' },
+        { value: 6, label: '13' },
+        { value: 7, label: '15' },
+    ] : isKol ? [
         { value: 0, label: '1' },
     ] : [
         { value: 1, label: '1' },
@@ -159,7 +198,7 @@ const SendSolForm = () => {
                 <div className='presaleform'>
                     <h2>Presale</h2>
                     <h3 className='status'>{totalraise >= 1000 ? 'Closed' : 'Upcoming'} </h3>
-                    <h2>Granduted Round</h2>
+                    <h2>{phase === 1 ? 'Granduted Round' : 'WL FCFS'}</h2>
                     <div className='totalraise'>
                         <div className='totalraiseinfo'>{formatString(totalraise)} / 1000 SOL</div>
                         <div className='chart' >
@@ -167,13 +206,13 @@ const SendSolForm = () => {
                         </div>
                     </div>
                     <form onSubmit={sendSol} className='raiseForm'>
-                        <input disabled type="text" id='amount' required value={sliderValue} />
+                        <input type="text" id='amount' required value={sliderValue} onChange={handleChange} />
                         <input
                             className="slider"
                             type="range"
                             min={1}
-                            max={isKol ? 1 : 3}
-                            step={0.5}
+                            max={phase === 1 ? 3 : isKol ? 1 : 15}
+                            step={phase === 1 ? 0.5 : 1}
                             value={sliderValue}
                             onChange={handleSliderChange}
                         />
