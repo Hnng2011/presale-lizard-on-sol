@@ -17,7 +17,7 @@
 }
 
 html {
-    background-color: rgb(46, 46, 46);
+    background: linear-gradient(-90deg, #00d2ff 0%, aqua 100%);
 }
 
 * {
