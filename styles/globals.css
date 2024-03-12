@@ -342,6 +342,16 @@ input[type="range"] {
 }
 
 @media screen and (max-width: 768px) {
+    .inform h3 {
+        font-size: 2rem;
+    }
+
+    .inform img {
+        width: 30px;
+        height: 30px;
+        aspect-ratio: 1/1;
+    }
+
     .container {
         flex-direction: column;
         padding: 0 0 12px 0;
