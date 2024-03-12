@@ -6,7 +6,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 
 
 const SendSolForm = () => {
-    const phase: number = 2;
+    const phase: number = 1;
     const [isWl, setWL] = useState(false)
     const [isKol, setKOL] = useState(true)
     const [totalraise, setTotalRaise] = useState(0)
@@ -47,26 +47,33 @@ const SendSolForm = () => {
 
 
 
-    const marks = phase !== 1 ? [
-        { value: 0, label: '1' },
-        { value: 1, label: '3' },
-        { value: 2, label: '5' },
-        { value: 3, label: '7' },
-        { value: 4, label: '9' },
-        { value: 5, label: '11' },
-        { value: 6, label: '13' },
-        { value: 7, label: '15' },
-    ] : isKol ? [
-        { value: 0, label: '1' },
-    ] : [
-        { value: 1, label: '1' },
-        { value: 2, label: '1.5' },
-        { value: 3, label: '2' },
-        { value: 4, label: '2.5' },
-        { value: 5, label: '3' },
-    ];
+    const marks =
+        isKol ? [{ value: 0, label: '1' }]
+            : phase !== 1
+                ? [
+                    { value: 0, label: '1' },
+                    { value: 1, label: '2' },
+                    { value: 2, label: '3' },
+                    { value: 3, label: '4' },
+                    { value: 4, label: '5' },
+                    { value: 5, label: '6' },
+                    { value: 6, label: '7' },
+                    { value: 7, label: '8' },
+                    { value: 8, label: '9' },
+                    { value: 9, label: '10' },
+                ]
+                : [
+                    { value: 1, label: '1' },
+                    { value: 2, label: '1.5' },
+                    { value: 3, label: '2' },
+                ];
 
     const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
+        if (!isWl) {
+            console.log('You are not WL , please do not try to send transaction.');
+            return;
+        }
+
         event.preventDefault();
         setLoading(true)
         if (!connection || !publicKey) {
@@ -123,11 +130,10 @@ const SendSolForm = () => {
                     throw new Error(`HTTP error! Status: ${wl.status}`);
                 }
 
-
                 const wlData = await wl.json();
                 setKOL(Boolean(wlData.isKOL));
                 Boolean(wlData.isKOL) && setSliderValue(1)
-                setWL(Boolean(wlData?.address));
+                setWL(true);
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setWL(false);
@@ -187,7 +193,7 @@ const SendSolForm = () => {
                         </div>
                         <div className='about'>
                             <p>
-                                In the real world, it transformed into everything from keychains to memes, a playful reminder of the thrilling alliances and betrayals that unfolded in the virtual spaces it touched.</p>
+                                $LIZA, a unique meme token that brings laughter and investment together in the crypto. $LIZA stands out with its playful lizard mascot, symbolizing strength, agility, and adaptability. Our goal is to create a vibrant community where joy, creativity, and active participation are encouraged.</p>
                             <p>Lizard Presale</p>
                             <p>Symbol: $LIZA</p>
                             <p>Supply: 1,000,000,000 $LIZA</p>
@@ -206,12 +212,12 @@ const SendSolForm = () => {
                         </div>
                     </div>
                     <form onSubmit={sendSol} className='raiseForm'>
-                        <input type="text" id='amount' required value={sliderValue} onChange={handleChange} />
+                        <input disabled type="text" id='amount' required value={sliderValue} onChange={handleChange} />
                         <input
                             className="slider"
                             type="range"
+                            max={isKol ? 1 : phase === 1 ? 2 : 10}
                             min={1}
-                            max={phase === 1 ? 3 : isKol ? 1 : 15}
                             step={phase === 1 ? 0.5 : 1}
                             value={sliderValue}
                             onChange={handleSliderChange}
