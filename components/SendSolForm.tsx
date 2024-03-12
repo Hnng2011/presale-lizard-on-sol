@@ -23,10 +23,10 @@ const SendSolForm = () => {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const parsedValue = parseFloat(e.target.value);
         let result = 0;
-        if (phase === 1) {
-            result = 3;
-        } else if (isKol) {
+        if (isKol) {
             result = 1;
+        } else if (phase === 1) {
+            result = 3;
         } else {
             result = 15;
         }
@@ -61,11 +61,18 @@ const SendSolForm = () => {
                     { value: 7, label: '8' },
                     { value: 8, label: '9' },
                     { value: 9, label: '10' },
+                    { value: 10, label: '11' },
+                    { value: 11, label: '12' },
+                    { value: 12, label: '13' },
+                    { value: 13, label: '14' },
+                    { value: 14, label: '15' },
                 ]
                 : [
                     { value: 1, label: '1' },
                     { value: 2, label: '1.5' },
                     { value: 3, label: '2' },
+                    { value: 4, label: '2.5' },
+                    { value: 5, label: '3' },
                 ];
 
     const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
@@ -216,7 +223,7 @@ const SendSolForm = () => {
                         <input
                             className="slider"
                             type="range"
-                            max={isKol ? 1 : phase === 1 ? 2 : 10}
+                            max={isKol ? 1 : phase === 1 ? 3 : 15}
                             min={1}
                             step={phase === 1 ? 0.5 : 1}
                             value={sliderValue}
