@@ -231,9 +231,10 @@ html {
 
 .slider {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     height: 25px;
-    background: #d3d3d3;
+    background: smokewhite;
     outline: none;
     opacity: 0.7;
     -webkit-transition: .2s;
@@ -242,11 +243,13 @@ html {
 }
 
 .slider::-webkit-slider-thumb {
+    box-sizing: border-box;
     -webkit-appearance: none;
     appearance: none;
-    width: 23px;
-    height: 23px;
+    width: 21px;
+    height: 21px;
     background: #04AA6D;
+    border: 2px solid white;
     border-radius: 50%;
     cursor: pointer;
 }
@@ -291,6 +294,7 @@ input::placeholder {
 
 input[type="range"] {
     padding: 0;
+    border: none;
 }
 
 .raiseForm p {
@@ -344,13 +348,13 @@ input[type="range"] {
     }
 
     .informpresale {
-        width: calc(100% - 24px);
-        margin: 0 12px;
+        width: calc(100% - 12px);
+        margin: 0 6px;
     }
 
     .presaleform {
-        width: calc(100% - 24px);
-        margin: 0 12px;
+        width: calc(100% - 12px);
+        margin: 0 6px;
     }
 
     .imgSocial {

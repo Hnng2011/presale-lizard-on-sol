@@ -6,7 +6,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 
 
 const SendSolForm = () => {
-    const phase: number = 1;
+    const phase: number = 2;
     const [isWl, setWL] = useState(false)
     const [isKol, setKOL] = useState(true)
     const [totalraise, setTotalRaise] = useState(0)
@@ -230,7 +230,7 @@ const SendSolForm = () => {
                         />
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontFamily: 'MemeFont2' }}>
                             {marks.map((mark) => (
-                                <div style={{ color: 'black', width: '25px', textAlign: 'center' }} key={mark.value}>{mark.label}</div>
+                                <div style={{ color: 'black', width: '21px', height: '21px', textAlign: 'center' }} key={mark.value}>{mark.label}</div>
                             ))}
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
