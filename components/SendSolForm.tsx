@@ -6,7 +6,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 
 
 const SendSolForm = () => {
-    const phase: number = 2;
+    const phase: number = 1;
     const [isWl, setWL] = useState(false)
     const [isKol, setKOL] = useState(true)
     const [totalraise, setTotalRaise] = useState(0)
