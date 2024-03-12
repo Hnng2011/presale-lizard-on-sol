@@ -162,7 +162,6 @@ const SendSolForm = () => {
                 });
 
                 if (!totalraise.ok) {
-                    setTotalRaise(0);
                     throw new Error(`HTTP error! Status: ${totalraise.status}`);
                 }
 
