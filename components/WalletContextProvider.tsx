@@ -18,7 +18,7 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     );
 
     return (
-        <ConnectionProvider endpoint={'https://solana-mainnet.core.chainstack.com/1f0e0ad3e104b4dc9caa4e72a44d01b7' || endpoint}>
+        <ConnectionProvider endpoint={'https://powerful-distinguished-sunset.solana-mainnet.quiknode.pro/fa032f5143d73df4c986c3f3465512c5e77bc40b/?fbclid=IwAR2OAP-wnEr2EMkkMq_sOx-l9nfb2bC_IOgHZJXzcsceNJetInqsbvBoPBA' || endpoint}>
             <WalletProvider wallets={wallets} autoConnect={true}>
                 <WalletModalProvider>
                     {children}
