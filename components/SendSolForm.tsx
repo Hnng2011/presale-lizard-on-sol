@@ -181,6 +181,7 @@ const SendSolForm = () => {
                 setKOL(Boolean(wlData.isKOL));
                 setCurBuy(wlData?.currentbuy.toString());
                 setWL(true);
+                console.log('WL:', wlData);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
