@@ -39,7 +39,7 @@ const SendSolForm = () => {
     };
 
     const phase: number = 1;
-    const [noti, setNoti] = useState(null)
+    const [noti, setNoti] = useState<{ detail: string, status: string } | null>(null)
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' });
     const [isWl, setWL] = useState(false)
     const [isKol, setKOL] = useState(true)
@@ -141,7 +141,7 @@ const SendSolForm = () => {
         });
 
         transaction.add(sendSolInstruction);
-        sendTransaction(transaction, connection).then((tx) => { setLoading(false); console.log(tx) }).catch((err) => { console.log(err); setLoading(false); });
+        sendTransaction(transaction, connection).then((tx) => { setLoading(false); setNoti({ detail: tx, status: 'success' }) }).catch((err) => { console.log(err); setLoading(false); setNoti({ detail: err.toString(), status: 'failed' }) });
     };
 
     function formatString(total: number) {
@@ -217,6 +217,14 @@ const SendSolForm = () => {
     }, [loading])
 
     useEffect(() => {
+        if (noti) {
+            setTimeout(() => {
+                setNoti(null);
+            }, 5000);
+        }
+    }, [noti])
+
+    useEffect(() => {
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
@@ -226,6 +234,9 @@ const SendSolForm = () => {
 
     return (
         <>
+            <div className='notistack'>
+                {noti?.status === 'success' ? <a target='_blank' href={`https://solscan.io/tx/${noti?.detail}`}><div className='noti' style={{ wordBreak: 'break-all' }}>{'Done.'} <br /> {'TX: '}{noti?.detail}</div></a> : noti?.status === 'failed' ? <div className='noti' style={{ color: 'white', backgroundColor: 'red' }}>{'Failed.'} <br /> {noti?.detail}</div> : null}
+            </div>
             <div className='container'>
                 <div className='informpresale'>
                     <img className='imgSocial' src='/social.jpg' alt='Presale' />

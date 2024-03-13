@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+a {
+    text-decoration: none;
+}
+
 @font-face {
     font-family: 'MemeFont';
     src: url('../assets/fonts/PermanentMarker-Regular.ttf') format('woff2');
@@ -411,7 +415,43 @@ input[type="range"] {
     justify-content: space-between;
 }
 
+.notistack {
+    z-index: 99;
+    font-family: 'MemeFont2', sans-serif;
+    width: 20%;
+    position: fixed;
+    top: 2%;
+    left: 2%;
+    overflow: hidden;
+    height: 20vh;
+    word-break: normal;
+}
+
+.noti {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    background-color: rgb(80, 247, 80);
+    color: black;
+    animation: opc 0.5s ease-out;
+}
+
+@keyframes opc {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
 @media screen and (max-width: 768px) {
+
+    .notistack {
+        width: 70%;
+    }
+
     .inform h3 {
         font-size: 2rem;
     }
