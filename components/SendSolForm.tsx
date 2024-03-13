@@ -179,7 +179,7 @@ const SendSolForm = () => {
 
                 const wlData = await wl.json();
                 setKOL(Boolean(wlData.isKOL));
-                setCurBuy(wlData?.currentbuy?.toString());
+                setCurBuy(wlData?.currentbuy?.toString() || 0);
                 setWL(true);
                 console.log('WL:', wlData);
             } catch (error) {
