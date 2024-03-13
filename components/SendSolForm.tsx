@@ -1,3 +1,5 @@
+'use client'
+
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
@@ -6,9 +8,42 @@ import { ChangeEvent, useEffect, useState } from 'react'
 
 
 const SendSolForm = () => {
+    const targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`);
+    const endDate = new Date(`${process.env.NEXT_PUBLIC_END_DATE as String}`);
+
+    const calculateTimeLeft = (): { days: number; hours: number; minutes: number; seconds: number, status: string } => {
+        let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' };
+        let difference = +new Date(targetDateUTC) - +new Date();
+
+        if (difference <= 0) {
+            difference = +new Date(endDate) - +new Date();
+            timeLeft = {
+                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                minutes: Math.floor((difference / 1000 / 60) % 60),
+                seconds: Math.floor((difference / 1000) % 60),
+                status: 'open',
+            };
+        }
+        else {
+            timeLeft = {
+                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                minutes: Math.floor((difference / 1000 / 60) % 60),
+                seconds: Math.floor((difference / 1000) % 60),
+                status: 'close',
+            };
+        }
+
+        return timeLeft;
+    };
+
     const phase: number = 1;
+    const [noti, setNoti] = useState(null)
+    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' });
     const [isWl, setWL] = useState(false)
     const [isKol, setKOL] = useState(true)
+    const [curBuy, setCurBuy] = useState(0)
     const [totalraise, setTotalRaise] = useState(0)
     const [loading, setLoading] = useState(false)
     const { connection } = useConnection();
@@ -81,6 +116,11 @@ const SendSolForm = () => {
             return;
         }
 
+        if (timeLeft.status === 'close') {
+            console.log('Not time for minting yet.');
+            return;
+        }
+
         event.preventDefault();
         setLoading(true)
         if (!connection || !publicKey) {
@@ -101,7 +141,7 @@ const SendSolForm = () => {
         });
 
         transaction.add(sendSolInstruction);
-        sendTransaction(transaction, connection).then(() => { setLoading(false) }).catch((err) => { console.log(err); setLoading(false); });
+        sendTransaction(transaction, connection).then((tx) => { setLoading(false); console.log(tx) }).catch((err) => { console.log(err); setLoading(false); });
     };
 
     function formatString(total: number) {
@@ -139,7 +179,7 @@ const SendSolForm = () => {
 
                 const wlData = await wl.json();
                 setKOL(Boolean(wlData.isKOL));
-                Boolean(wlData.isKOL) && setSliderValue(1)
+                setCurBuy(wlData.currentBuy || 0);
                 setWL(true);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -176,6 +216,14 @@ const SendSolForm = () => {
         !loading && checkTotalraise();
     }, [loading])
 
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
     return (
         <>
             <div className='container'>
@@ -208,12 +256,37 @@ const SendSolForm = () => {
                     </div>
                 </div>
                 <div className='presaleform'>
-                    <h2>Presale</h2>
-                    <h3 className='status'>{totalraise >= 1000 ? 'Closed' : 'Upcoming'} </h3>
-                    <h2>{phase === 1 ? 'Granduted Round' : 'WL FCFS'}</h2>
+                    <div>
+                        <h2>Presale</h2>
+                        <div className='presaleformflex'>
+                            <div>  <p>Granduted Round start:</p> <img src='/icon.svg' /> <p> March 12 2024 10:00 (UTC)</p></div>
+                            <div><p>WL FCFS start:</p>  <img src='/icon.svg' />  <p> March 13 2024 10:00 (UTC)</p></div>
+                        </div>
+                    </div>
+
+                    <div className='round'>
+                        <h2 className='currentround'>{phase === 1 ? 'Granduted Round' : 'WL FCFS'}</h2>
+                        <h3 className='status' style={{ backgroundColor: `${timeLeft.status === 'close' ? 'red' : 'green'}` }}>{totalraise >= 1000 || timeLeft.status === 'close' ? 'Closed' : 'Upcoming'}</h3>
+                    </div>
+
+                    <div className='timeleftitem'>
+                        <div className='dot' style={{ backgroundColor: `${timeLeft.status === 'close' ? 'red' : 'green'}` }}></div>
+                        <p>{timeLeft.status === 'close' ? 'Open In:' : 'End In:'}</p>
+                        <div><p>{timeLeft.days}</p><p>Days</p></div>
+                        <div><p>:</p></div>
+                        <div><p>{timeLeft.hours}</p><p>Hours</p></div>
+                        <div><p>:</p></div>
+                        <div><p>{timeLeft.minutes}</p><p>Minutes</p></div>
+                        <div><p>:</p></div>
+                        <div><p>{timeLeft.seconds}</p><p>Seconds</p></div>
+                    </div>
+
                     <div className='totalraise'>
-                        <div className='totalraiseinfo'>{formatString(totalraise)} / 1000 SOL</div>
-                        <div className='chart' >
+                        <div className='total'>
+                            <div className='totalraiseinfo'>Your Bought: {formatString(curBuy)} / {isKol ? 1 : phase === 1 ? 3 : 15} SOL</div>
+                            <div className='totalraiseinfo'>Total Raised: {formatString(totalraise)} / 1000 SOL</div>
+                        </div>
+                        <div className='chart'>
                             <div style={{ clipPath: `polygon(0 0, ${(totalraise / 1000) * 100}% 0, ${(totalraise / 1000) * 100}% 100%, 0 100%)` }} className='chartstatus'></div>
                         </div>
                     </div>
@@ -237,7 +310,7 @@ const SendSolForm = () => {
                             <p>Min: {marks[0].label} SOL</p>
                             <p>Max: {marks[marks.length - 1].label} SOL</p>
                         </div>
-                        <button disabled={!isWl || loading || sliderValue === 0} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
+                        <button disabled={!isWl || loading || timeLeft.status === 'close'} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
             </div >

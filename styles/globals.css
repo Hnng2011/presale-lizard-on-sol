@@ -62,7 +62,7 @@ html {
 }
 
 .informpresale {
-    flex: 1.1;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -90,7 +90,7 @@ html {
     border: 4px solid rgb(46, 46, 46);
     overflow: hidden;
     border-radius: 15px;
-    flex: 0.9;
+    flex: 1;
     background-color: pink;
     backdrop-filter: blur(10px);
     --webkit-backdrop-filter: blur(10px);
@@ -170,19 +170,78 @@ html {
 
 .presaleform h2 {
     font-family: 'MemeFont', sans-serif;
-    font-size: 2rem;
+    font-size: 3rem;
     color: black;
 }
 
-.presaleform h2:nth-child(3) {
+.presaleformflex {
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+}
+
+.presaleformflex div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+.presaleformflex img {
+    width: 30px;
+    aspect-ratio: 1/1;
+    background-color: black;
+    border-radius: 50%;
+}
+
+
+.presaleform p {
     font-family: 'MemeFont2', sans-serif;
-    font-size: 2.2rem;
+    color: black;
+}
+
+.round {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.currentround {
+    font-family: 'MemeFont', sans-serif;
+    font-size: 2.5rem !important;
     --webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
+    color: transparent !important;
     background-image: linear-gradient(109.6deg, rgb(9, 9, 121) 11.2%, rgb(144, 6, 161) 53.7%, rgb(0, 212, 255) 100.2%);
     background-size: 200% 100%;
     animation: process 2s linear infinite;
+}
+
+.timeleftitem {
+    background-color: rgba(46, 46, 46, 0.897);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 1rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background-color: red;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+
+.timeleftitem p {
+    color: white;
+    text-align: center;
 }
 
 .presaleform h3 {
@@ -193,6 +252,7 @@ html {
     background: rgba(0, 128, 0, 0.8);
     width: fit-content;
     border-radius: 20px;
+    height: fit-content;
 }
 
 .totalraise {
@@ -207,6 +267,10 @@ html {
 .totalraiseinfo {
     font-family: 'MemeFont2', sans-serif;
     color: black;
+}
+
+.totalraiseinfo {
+    text-align: end;
 }
 
 .chart {
@@ -339,6 +403,12 @@ input[type="range"] {
     border: 2px solid black;
     border-radius: 4px;
     color: black;
+}
+
+.total {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 @media screen and (max-width: 768px) {
