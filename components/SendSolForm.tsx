@@ -180,7 +180,7 @@ const SendSolForm = () => {
                 const wlData = await wl.json();
                 setKOL(Boolean(wlData.isKOL));
                 setCurBuy(wlData?.currentbuy.toString());
-                setWL(wlData?.address);
+                setWL(true);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
