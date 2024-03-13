@@ -13,7 +13,7 @@ const SendSolForm = () => {
     const [loading, setLoading] = useState(false)
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
-    const [sliderValue, setSliderValue] = useState(1);
+    const [sliderValue, setSliderValue] = useState(0.5);
 
 
     const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +68,7 @@ const SendSolForm = () => {
                     { value: 14, label: '15' },
                 ]
                 : [
-                    { value: 1, label: '1' },
+                    { value: 1, label: '0.5' },
                     { value: 2, label: '1.5' },
                     { value: 3, label: '2' },
                     { value: 4, label: '2.5' },
@@ -223,7 +223,7 @@ const SendSolForm = () => {
                             className="slider"
                             type="range"
                             max={isKol ? 1 : phase === 1 ? 3 : 15}
-                            min={1}
+                            min={0.5}
                             step={phase === 1 ? 0.5 : 1}
                             value={sliderValue}
                             onChange={handleSliderChange}
