@@ -42,7 +42,7 @@ const SendSolForm = () => {
     const [noti, setNoti] = useState<{ detail: string, status: string } | null>(null)
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' });
     const [isWl, setWL] = useState(false)
-    const [isKol, setKOL] = useState(true)
+    const [isKol, setKOL] = useState(false)
     const [curBuy, setCurBuy] = useState(0)
     const [totalraise, setTotalRaise] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -179,11 +179,10 @@ const SendSolForm = () => {
 
                 const wlData = await wl.json();
                 setKOL(Boolean(wlData.isKOL));
-                setCurBuy(wlData.currentBuy || 0);
-                setWL(true);
+                setCurBuy(wlData?.currentbuy.toString());
+                setWL(wlData?.address);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setWL(false);
             }
         }
         checkWL();
