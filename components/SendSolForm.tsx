@@ -17,13 +17,25 @@ const SendSolForm = () => {
 
         if (difference <= 0) {
             difference = +new Date(endDate) - +new Date();
-            timeLeft = {
-                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                minutes: Math.floor((difference / 1000 / 60) % 60),
-                seconds: Math.floor((difference / 1000) % 60),
-                status: 'open',
-            };
+            if (difference <= 0) {
+                timeLeft = {
+                    days: 0,
+                    hours: 0,
+                    minutes: 0,
+                    seconds: 0,
+                    status: 'close',
+                };
+            }
+            else {
+                timeLeft = {
+                    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                    minutes: Math.floor((difference / 1000 / 60) % 60),
+                    seconds: Math.floor((difference / 1000) % 60),
+                    status: 'open',
+                };
+            }
+
         }
         else {
             timeLeft = {
@@ -38,7 +50,7 @@ const SendSolForm = () => {
         return timeLeft;
     };
 
-    const phase: number = 1;
+    const phase: number = Number(process.env.NEXT_PUBLIC_PHASE_ROUND as string);
     const [noti, setNoti] = useState<{ detail: string, status: string } | null>(null)
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' });
     const [isWl, setWL] = useState(false)
@@ -49,7 +61,6 @@ const SendSolForm = () => {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
     const [sliderValue, setSliderValue] = useState(1);
-
 
     const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSliderValue(parseFloat(e.target.value));
