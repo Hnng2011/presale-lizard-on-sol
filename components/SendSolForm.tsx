@@ -5,52 +5,8 @@ import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { ChangeEvent, useEffect, useState } from 'react'
 
-
-
 const SendSolForm = () => {
-    const targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`);
-    const endDate = new Date(`${process.env.NEXT_PUBLIC_END_DATE as String}`);
-
-    const calculateTimeLeft = (): { days: number; hours: number; minutes: number; seconds: number, status: string } => {
-        let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' };
-        let difference = +new Date(targetDateUTC) - +new Date();
-
-        if (difference <= 0) {
-            difference = +new Date(endDate) - +new Date();
-            if (difference <= 0) {
-                timeLeft = {
-                    days: 0,
-                    hours: 0,
-                    minutes: 0,
-                    seconds: 0,
-                    status: 'close',
-                };
-            }
-            else {
-                timeLeft = {
-                    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                    minutes: Math.floor((difference / 1000 / 60) % 60),
-                    seconds: Math.floor((difference / 1000) % 60),
-                    status: 'open',
-                };
-            }
-
-        }
-        else {
-            timeLeft = {
-                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                minutes: Math.floor((difference / 1000 / 60) % 60),
-                seconds: Math.floor((difference / 1000) % 60),
-                status: 'close',
-            };
-        }
-
-        return timeLeft;
-    };
-
-    const phase: number = Number(process.env.NEXT_PUBLIC_PHASE_ROUND as string);
+    const [phase, setPhase] = useState(1);
     const [noti, setNoti] = useState<{ detail: string, status: string } | null>(null)
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' });
     const [isWl, setWL] = useState(false)
@@ -66,37 +22,18 @@ const SendSolForm = () => {
         setSliderValue(parseFloat(e.target.value));
     };
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const parsedValue = parseFloat(e.target.value);
-        let result = 0;
-        if (isKol) {
-            result = 1;
-        } else if (phase === 1) {
-            result = 3;
-        } else {
-            result = 15;
-        }
-
-        if (parsedValue > result) {
-            setSliderValue(result);
-        }
-
-        else if (parsedValue < 1 || isNaN(parsedValue)) {
-            setSliderValue(1);
-        }
-
-        else {
-            setSliderValue(parsedValue);
-        }
-    };
-
-
-
 
     const marks =
-        isKol ? [{ value: 0, label: '1' }]
-            : phase !== 1
-                ? [
+        phase === 1 ?
+            [{ value: 0, label: '1' }]
+            : phase === 2 ?
+                [
+                    { value: 1, label: '1' },
+                    { value: 2, label: '1.5' },
+                    { value: 3, label: '2' },
+                    { value: 4, label: '2.5' },
+                    { value: 5, label: '3' },
+                ] : [
                     { value: 0, label: '1' },
                     { value: 1, label: '2' },
                     { value: 2, label: '3' },
@@ -113,13 +50,7 @@ const SendSolForm = () => {
                     { value: 13, label: '14' },
                     { value: 14, label: '15' },
                 ]
-                : [
-                    { value: 1, label: '1' },
-                    { value: 2, label: '1.5' },
-                    { value: 3, label: '2' },
-                    { value: 4, label: '2.5' },
-                    { value: 5, label: '3' },
-                ];
+
 
     const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
         if (!isWl) {
@@ -128,6 +59,11 @@ const SendSolForm = () => {
         }
 
         if (timeLeft.status === 'close') {
+            console.log('Not time for minting yet.');
+            return;
+        }
+
+        if (phase === 1 && !isKol) {
             console.log('Not time for minting yet.');
             return;
         }
@@ -235,12 +171,89 @@ const SendSolForm = () => {
     }, [noti])
 
     useEffect(() => {
+        let targetDateUTC: Date;
+        let endDateUTC: Date;
+
+        if (phase == 1) {
+            targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`);
+            endDateUTC = new Date(targetDateUTC.getTime() + (24 * 60 * 60 * 1000));
+        }
+        else if (phase == 2) {
+            targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`);
+            targetDateUTC = new Date(targetDateUTC.getTime() + (24 * 60 * 60 * 1000) + (30 * 60 * 1000));
+            endDateUTC = new Date(targetDateUTC.getTime() + (24 * 60 * 60 * 1000));
+        }
+
+        else if (phase == 3) {
+            targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`);
+            targetDateUTC = new Date(targetDateUTC.getTime() + (49 * 60 * 60 * 1000));
+            endDateUTC = new Date(targetDateUTC.getTime() + (24 * 60 * 60 * 1000));
+        }
+
+        const calculateTimeLeft = (): { days: number; hours: number; minutes: number; seconds: number, status: string } => {
+            let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' };
+            let difference = +new Date(targetDateUTC) - +new Date();
+
+            if (difference <= 0) {
+                difference = +new Date(endDateUTC) - +new Date();
+                if (difference <= 0) {
+                    timeLeft = {
+                        days: 0,
+                        hours: 0,
+                        minutes: 0,
+                        seconds: 0,
+                        status: 'close',
+                    };
+                }
+                else {
+                    timeLeft = {
+                        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                        minutes: Math.floor((difference / 1000 / 60) % 60),
+                        seconds: Math.floor((difference / 1000) % 60),
+                        status: 'open',
+                    };
+                }
+            }
+
+            else {
+                timeLeft = {
+                    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                    minutes: Math.floor((difference / 1000 / 60) % 60),
+                    seconds: Math.floor((difference / 1000) % 60),
+                    status: 'upcoming',
+                };
+            }
+
+            return timeLeft;
+        };
+
+
+
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+
+    }, [phase]);
+
+
+
+    useEffect(() => {
+        const targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`).getTime();
+        var currentDateUTC = new Date().getTime();
+
+        if (currentDateUTC - targetDateUTC >= 24 * 60 * 60 * 1000) {
+            setPhase(2);
+        }
+
+        if (currentDateUTC - targetDateUTC >= (48 * 60 * 60 * 1000) + (30 * 60 * 1000)) {
+            setPhase(3);
+        }
+
+    }, [timeLeft])
 
     return (
         <>
@@ -280,19 +293,18 @@ const SendSolForm = () => {
                     <div>
                         <h2>Presale</h2>
                         <div className='presaleformflex'>
-                            <div>  <p>Granduted Round start:</p> <img src='/icon.svg' /> <p> March 12 2024 10:00 (UTC)</p></div>
-                            <div><p>WL FCFS start:</p>  <img src='/icon.svg' />  <p> March 13 2024 10:00 (UTC)</p></div>
+                            <div>  <p>Start in:</p> <img src='/icon.svg' /> <p> March 24 2024 14:00 (UTC)</p></div>
                         </div>
                     </div>
 
                     <div className='round'>
-                        <h2 className='currentround'>{phase === 1 ? 'Granduted Round' : 'WL FCFS'}</h2>
-                        <h3 className='status' style={{ backgroundColor: `${timeLeft.status === 'close' ? 'red' : 'green'}` }}>{totalraise >= 1000 || timeLeft.status === 'close' ? 'Closed' : 'Upcoming'}</h3>
+                        <h2 className='currentround'>{phase === 1 ? 'Whitelist T1' : phase === 2 ? 'Guarantee Round' : 'NFT Holder FCFS'}</h2>
+                        <h3 className='status' style={{ backgroundColor: `${timeLeft.status === 'upcoming' ? 'blue' : timeLeft.status === 'open' ? 'green' : 'red'}` }}>{timeLeft.status === 'upcoming' ? 'Upcoming' : timeLeft.status === 'open' ? 'Open' : 'Closed'}</h3>
                     </div>
 
                     <div className='timeleftitem'>
-                        <div className='dot' style={{ backgroundColor: `${timeLeft.status === 'close' ? 'red' : 'green'}` }}></div>
-                        <p>{timeLeft.status === 'close' ? 'Open In:' : 'End In:'}</p>
+                        <div className='dot' style={{ backgroundColor: `${timeLeft.status === 'upcoming' ? 'red' : 'green'}` }}></div>
+                        <p>{timeLeft.status === 'upcoming' ? 'Open In:' : 'End In:'}</p>
                         <div><p>{timeLeft.days}</p><p>Days</p></div>
                         <div><p>:</p></div>
                         <div><p>{timeLeft.hours}</p><p>Hours</p></div>
@@ -304,7 +316,7 @@ const SendSolForm = () => {
 
                     <div className='totalraise'>
                         <div className='total'>
-                            <div className='totalraiseinfo'>Your Bought: {formatString(curBuy)} / {isKol ? 1 : phase === 1 ? 3 : 15} SOL</div>
+                            <div className='totalraiseinfo'>Your Bought: {formatString(curBuy)} / {phase === 1 ? 1 : phase === 2 ? 3 : 15} SOL</div>
                             <div className='totalraiseinfo'>Total Raised: {formatString(totalraise)} / 1000 SOL</div>
                         </div>
                         <div className='chart'>
@@ -312,13 +324,13 @@ const SendSolForm = () => {
                         </div>
                     </div>
                     <form onSubmit={sendSol} className='raiseForm'>
-                        <input disabled type="text" id='amount' required value={sliderValue} onChange={handleChange} />
+                        <input disabled type="text" id='amount' required value={sliderValue} />
                         <input
                             className="slider"
                             type="range"
-                            max={isKol ? 1 : phase === 1 ? 3 : 15}
+                            max={phase === 1 ? 1 : phase === 2 ? 3 : 15}
                             min={1}
-                            step={phase === 1 ? 0.5 : 1}
+                            step={phase === 1 ? 1 : phase === 2 ? 0.5 : 1}
                             value={sliderValue}
                             onChange={handleSliderChange}
                         />
@@ -331,7 +343,7 @@ const SendSolForm = () => {
                             <p>Min: {marks[0].label} SOL</p>
                             <p>Max: {marks[marks.length - 1].label} SOL</p>
                         </div>
-                        <button disabled={!isWl || loading || timeLeft.status === 'close'} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
+                        <button disabled={!isWl || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && !isKol} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
             </div >
