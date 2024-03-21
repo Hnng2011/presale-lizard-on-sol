@@ -303,8 +303,8 @@ const SendSolForm = () => {
                     </div>
 
                     <div className='timeleftitem'>
-                        <div className='dot' style={{ backgroundColor: `${timeLeft.status === 'upcoming' ? 'red' : 'green'}` }}></div>
-                        <p>{timeLeft.status === 'upcoming' ? 'Open In:' : 'End In:'}</p>
+                        <div className='dot' style={{ backgroundColor: `${timeLeft.status === 'upcoming' || timeLeft.status === 'close' ? 'red' : 'green'}` }}></div>
+                        <p>{timeLeft.status === 'upcoming' || timeLeft.status === 'close' ? 'Open In:' : 'End In:'}</p>
                         <div><p>{timeLeft.days}</p><p>Days</p></div>
                         <div><p>:</p></div>
                         <div><p>{timeLeft.hours}</p><p>Hours</p></div>
