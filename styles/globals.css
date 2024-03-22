@@ -28,6 +28,16 @@ html {
     color: white;
 }
 
+.ref_button {
+    background-color: white;
+    color: black;
+    padding: 0 12px;
+    font-family: 'MemeFont2';
+    border: 2px solid pink;
+    height: 48px;
+    border-radius: 4px;
+}
+
 .wallet-adapter-button-trigger {
     background-color: pink !important;
     color: black !important;
@@ -54,10 +64,12 @@ html {
     gap: 12px;
 }
 
+
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 12px 24px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;

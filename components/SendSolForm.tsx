@@ -4,6 +4,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { ChangeEvent, useEffect, useState } from 'react'
+import NavBar from './NavBar';
 
 const SendSolForm = () => {
     const [phase, setPhase] = useState(1);
@@ -15,7 +16,7 @@ const SendSolForm = () => {
     const [totalraise, setTotalRaise] = useState(0)
     const [loading, setLoading] = useState(false)
     const { connection } = useConnection();
-    const { publicKey, sendTransaction } = useWallet();
+    const { publicKey, sendTransaction, } = useWallet();
     const [sliderValue, setSliderValue] = useState(1);
 
     const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,23 +53,59 @@ const SendSolForm = () => {
                 ]
 
 
+    const postRef = () => {
+        const postData = {
+            address: publicKey?.toBase58(),
+            ref: new URL(window.location.href).searchParams.get('ref'),
+        };
+
+        if (postData.ref && postData.address) {
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL as String}/ref`;
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Post created successfully:', data);
+                })
+                .catch(error => {
+                    console.error('Error creating post:', error);
+                });
+        }
+    }
+
     const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
         if (!isWl) {
             console.log('You are not WL , please do not try to send transaction.');
-            return;
+            setNoti({ detail: 'You are not WL , please do not try to send transaction.', status: 'failed' })
+            return
         }
 
-        if (timeLeft.status === 'close') {
+        else if (timeLeft.status === 'close') {
             console.log('Not time for minting yet.');
-            return;
+            setNoti({ detail: 'Not time for minting yet.', status: 'failed' })
+            return
         }
 
-        if (phase === 1 && !isKol) {
+        else if (phase === 1 && !isKol) {
             console.log('Not time for minting yet.');
-            return;
+            setNoti({ detail: 'Your minting round has passed', status: 'failed' })
+            return
         }
 
-        event.preventDefault();
+
         setLoading(true)
         if (!connection || !publicKey) {
             return;
@@ -88,7 +125,8 @@ const SendSolForm = () => {
         });
 
         transaction.add(sendSolInstruction);
-        sendTransaction(transaction, connection).then((tx) => { setLoading(false); setNoti({ detail: tx, status: 'success' }) }).catch((err) => { console.log(err); setLoading(false); setNoti({ detail: err.toString(), status: 'failed' }) });
+        sendTransaction(transaction, connection).then((tx) => { postRef(); setLoading(false); setNoti({ detail: tx, status: 'success' }) }).catch((err) => { console.log(err); setLoading(false); setNoti({ detail: err.toString(), status: 'failed' }) });
+
     };
 
     function formatString(total: number) {
@@ -101,11 +139,10 @@ const SendSolForm = () => {
         } else {
             return total;
         }
-    }
+    };
 
     useEffect(() => {
         if (!publicKey) {
-            setWL(false);
             return;
         }
 
@@ -125,8 +162,8 @@ const SendSolForm = () => {
                 }
 
                 const wlData = await wl.json();
-                setKOL(Boolean(wlData.isKOL));
                 setCurBuy(wlData.currentbuy || 0);
+                setKOL(Boolean(wlData.isKOL));
                 setWL(wlData.address || false);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -239,8 +276,6 @@ const SendSolForm = () => {
 
     }, [phase]);
 
-
-
     useEffect(() => {
         const targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`).getTime();
         var currentDateUTC = new Date().getTime();
@@ -257,8 +292,9 @@ const SendSolForm = () => {
 
     return (
         <>
+            <NavBar setStateFunction={setNoti} />
             <div className='notistack'>
-                {noti?.status === 'success' ? <a target='_blank' href={`https://solscan.io/tx/${noti?.detail}`}><div className='noti' style={{ wordBreak: 'break-all' }}>{'Done.'} <br /> {'TX: '}{noti?.detail}</div></a> : noti?.status === 'failed' ? <div className='noti' style={{ color: 'white', backgroundColor: 'red' }}>{'Failed.'} <br /> {noti?.detail}</div> : null}
+                {noti?.status === 'success' ? <a target='_blank' href={`https://solscan.io/tx/${noti?.detail}`}><div className='noti' style={{ wordBreak: 'break-all' }}>{'Done.'} <br /> {'TX: '}{noti?.detail}</div></a> : noti?.status === 'failed' ? <div className='noti' style={{ color: 'white', backgroundColor: 'red' }}>{'Failed.'} <br /> {noti?.detail}</div> : noti?.status === 'copy' ? <div className='noti' style={{ width: 'fit-content' }}>{'Copied to.'}</div> : null}
             </div>
             <div className='container'>
                 <div className='informpresale'>
