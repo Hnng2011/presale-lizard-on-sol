@@ -290,10 +290,6 @@ const SendSolForm = () => {
 
     }, [timeLeft])
 
-    useEffect(() => {
-        postRef();
-    }, [])
-
     return (
         <>
             <NavBar setStateFunction={setNoti} />
