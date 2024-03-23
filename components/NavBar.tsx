@@ -25,7 +25,7 @@ const NavBar: FC<NavBarProps> = ({ setStateFunction }) => {
 
     return (
         <div className="navbar">
-            <button className="ref_button" onClick={() => ref_Button_Click()}> Get REF LINK</button>
+            {publicKey && <button className="ref_button" onClick={() => ref_Button_Click()}> Get REF LINK</button>}
             {/* Pass setStateFunction as a prop */}
             <ReactUIWalletMultiButtonDynamic />
         </div>
