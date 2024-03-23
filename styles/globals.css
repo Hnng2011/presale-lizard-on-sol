@@ -437,7 +437,6 @@ input[type="range"] {
     overflow: hidden;
     height: 20vh;
     word-break: normal;
-    pointer-events: none;
 }
 
 .noti {

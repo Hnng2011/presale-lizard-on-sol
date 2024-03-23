@@ -3,11 +3,10 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState, useMemo } from 'react'
 import NavBar from './NavBar';
 
 const SendSolForm = () => {
-    const [phase, setPhase] = useState(1);
     const [noti, setNoti] = useState<{ detail: string, status: string } | null>(null)
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' });
     const [isWl, setWL] = useState(false)
@@ -15,42 +14,98 @@ const SendSolForm = () => {
     const [curBuy, setCurBuy] = useState(0)
     const [totalraise, setTotalRaise] = useState(0)
     const [loading, setLoading] = useState(false)
+    const [prevLoading, setPrevLoading] = useState(false);
     const { connection } = useConnection();
     const { publicKey, sendTransaction, } = useWallet();
     const [sliderValue, setSliderValue] = useState(1);
+    const [marks, setMarks] = useState([{ value: 1, label: '1' }])
+    const phase = useMemo(() => {
+        const targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as string}`).getTime();
+        const currentDateUTC = new Date().getTime();
+
+        if (currentDateUTC - targetDateUTC >= 24 * 60 * 60 * 1000) {
+            return 2;
+        }
+
+        if (currentDateUTC - targetDateUTC >= (48 * 60 * 60 * 1000) + (30 * 60 * 1000)) {
+            return 3;
+        }
+
+        return 1;
+    }, [timeLeft]);
+    const generatedMarks = useMemo(() => {
+        const generateMarks = (phase: number, curBuy: number) => {
+            if (phase === 1) {
+                const curLeft = 2 - curBuy;
+
+                if (curLeft === 1) {
+                    return [
+                        { value: 1, label: '1' }
+                    ];
+                }
+                else if (curLeft === 0) {
+                    return [
+                        { value: 1, label: '0' },
+                    ];
+                }
+            } else if (phase === 2) {
+                const curLeft = 2 - curBuy;
+                if (curLeft === 2) {
+                    return [
+                        { value: 1, label: '1' },
+                        { value: 2, label: '1.5' },
+                        { value: 3, label: '2' },
+                    ];
+                } else if (curLeft === 0) {
+                    return [
+                        { value: 1, label: '0' },
+                    ];
+                } else {
+                    let marks = [];
+                    const ret = curLeft / 0.5;
+                    for (let i = 0; i < ret; i++) {
+                        marks.push({ value: i + 1, label: `${(i + 1) * 0.5}` });
+                    }
+                    return marks;
+                }
+            } else {
+                const curLeft = 10 - curBuy;
+                if (curLeft === 10) {
+                    return [
+                        { value: 1, label: '1' },
+                        { value: 2, label: '2' },
+                        { value: 3, label: '3' },
+                        { value: 4, label: '4' },
+                        { value: 5, label: '5' },
+                        { value: 6, label: '6' },
+                        { value: 7, label: '7' },
+                        { value: 8, label: '8' },
+                        { value: 9, label: '9' },
+                        { value: 10, label: '10' },
+                    ];
+                } else if (curLeft === 0) {
+                    return [
+                        { value: 1, label: '0' },
+                    ];
+                } else {
+                    let marks = [];
+                    const ret = curLeft;
+                    for (let i = 0; i < ret; i++) {
+                        marks.push({ value: i + 1, label: `${(i + 1)}` });
+                    }
+                    return marks;
+                }
+            }
+        };
+
+        return generateMarks(phase, curBuy);
+    }, [phase, curBuy]);
+
+
 
     const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSliderValue(parseFloat(e.target.value));
     };
-
-
-    const marks =
-        phase === 1 ?
-            [{ value: 0, label: '1' }]
-            : phase === 2 ?
-                [
-                    { value: 1, label: '1' },
-                    { value: 2, label: '1.5' },
-                    { value: 3, label: '2' },
-                    { value: 4, label: '2.5' },
-                    { value: 5, label: '3' },
-                ] : [
-                    { value: 0, label: '1' },
-                    { value: 1, label: '2' },
-                    { value: 2, label: '3' },
-                    { value: 3, label: '4' },
-                    { value: 4, label: '5' },
-                    { value: 5, label: '6' },
-                    { value: 6, label: '7' },
-                    { value: 7, label: '8' },
-                    { value: 8, label: '9' },
-                    { value: 9, label: '10' },
-                    { value: 10, label: '11' },
-                    { value: 11, label: '12' },
-                    { value: 12, label: '13' },
-                    { value: 13, label: '14' },
-                    { value: 14, label: '15' },
-                ]
 
 
     const postRef = () => {
@@ -59,7 +114,7 @@ const SendSolForm = () => {
             ref: new URL(window.location.href).searchParams.get('ref'),
         };
 
-        if (postData.ref && postData.address) {
+        if (postData.ref && postData.address && postData.ref !== postData.address) {
             const apiUrl = `${process.env.NEXT_PUBLIC_API_URL as String}/ref`;
 
             fetch(apiUrl, {
@@ -84,24 +139,23 @@ const SendSolForm = () => {
         }
     }
 
-    const sendSol = (event: React.FormEvent<HTMLFormElement>) => {
+    const sendSol = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (!isWl) {
+        if (phase != 3 && !isWl) {
             console.log('You are not WL , please do not try to send transaction.');
             setNoti({ detail: 'You are not WL , please do not try to send transaction.', status: 'failed' })
             return
         }
 
-        else if (timeLeft.status === 'close') {
+        else if (timeLeft.status === 'close' || timeLeft.status === 'upcoming') {
             console.log('Not time for minting yet.');
             setNoti({ detail: 'Not time for minting yet.', status: 'failed' })
             return
         }
 
-        else if (phase === 1 && !isKol) {
-            console.log('Not time for minting yet.');
-            setNoti({ detail: 'Your minting round has passed', status: 'failed' })
+        else if (phase === 1 && !isKol || phase != 1 && isKol) {
+            setNoti({ detail: 'You don\'t have permission in this round', status: 'failed' })
             return
         }
 
@@ -115,6 +169,7 @@ const SendSolForm = () => {
             amount: { value: string };
         };
 
+
         const transaction = new web3.Transaction();
         const recipientPubKey = new web3.PublicKey(process.env.NEXT_PUBLIC_PUBLIC_WALLET as string);
 
@@ -125,8 +180,23 @@ const SendSolForm = () => {
         });
 
         transaction.add(sendSolInstruction);
-        sendTransaction(transaction, connection).then((tx) => { postRef(); setLoading(false); setNoti({ detail: tx, status: 'success' }) }).catch((err) => { console.log(err); setLoading(false); setNoti({ detail: err.toString(), status: 'failed' }) });
+        let txSignature = '';
+        await sendTransaction(transaction, connection)
+            .then((tx) => {
+                txSignature = tx;
+            })
+            .catch((err) => { setLoading(false); setNoti({ detail: err.toString(), status: 'failed' }) });
 
+
+        if (!txSignature) {
+            return;
+        }
+
+        const result = await connection.confirmTransaction(txSignature, 'confirmed');
+        if (result) {
+            setNoti({ detail: txSignature, status: 'success' })
+            setLoading(false);
+        }
     };
 
     function formatString(total: number) {
@@ -145,6 +215,8 @@ const SendSolForm = () => {
         if (!publicKey) {
             return;
         }
+
+        postRef();
 
         const urlWL = `${process.env.NEXT_PUBLIC_API_URL as String}/checkwl?address=${publicKey.toBase58()}`;
         const checkWL = async () => {
@@ -175,6 +247,30 @@ const SendSolForm = () => {
 
     useEffect(() => {
         const urlTR = `${process.env.NEXT_PUBLIC_API_URL as String}/totalraise`;
+        const urlWL = `${process.env.NEXT_PUBLIC_API_URL as String}/checkwl?address=${publicKey?.toBase58()}`;
+        const checkWL = async () => {
+            try {
+                const wl = await fetch(urlWL, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (!wl.ok) {
+                    setWL(false);
+                    throw new Error(`HTTP error! Status: ${wl.status}`);
+                }
+
+                const wlData = await wl.json();
+                setCurBuy(wlData.currentbuy || 0);
+                setKOL(Boolean(wlData.isKOL));
+                setWL(wlData.address || false);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
         const checkTotalraise = async () => {
             try {
                 const totalraise = await fetch(urlTR, {
@@ -195,8 +291,30 @@ const SendSolForm = () => {
                 setTotalRaise(0);
             }
         }
+        if (!prevLoading && !loading) {
+            checkTotalraise();
+        }
 
-        !loading && checkTotalraise();
+        if (prevLoading && !loading) {
+            let maxRetry = 3;
+            let retryCount = 0;
+
+            const callFunctions = () => {
+                setTimeout(() => {
+                    checkTotalraise();
+                    checkWL();
+
+                    retryCount++;
+                    if (retryCount < maxRetry) {
+                        callFunctions();
+                    }
+                }, 1500);
+            };
+
+            callFunctions();
+        }
+
+        setPrevLoading(loading);
     }, [loading])
 
     useEffect(() => {
@@ -230,6 +348,11 @@ const SendSolForm = () => {
         const calculateTimeLeft = (): { days: number; hours: number; minutes: number; seconds: number, status: string } => {
             let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' };
             let difference = +new Date(targetDateUTC) - +new Date();
+
+            if (totalraise >= 700) {
+                return timeLeft;
+            }
+
 
             if (difference <= 0) {
                 difference = +new Date(endDateUTC) - +new Date();
@@ -277,18 +400,15 @@ const SendSolForm = () => {
     }, [phase]);
 
     useEffect(() => {
-        const targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`).getTime();
-        var currentDateUTC = new Date().getTime();
+        const generate = generatedMarks ?? [];
+        setMarks(generate as { value: number; label: string; }[]);
+        setSliderValue(parseFloat(generate[0]?.label));
+    }, [generatedMarks]);
 
-        if (currentDateUTC - targetDateUTC >= 24 * 60 * 60 * 1000) {
-            setPhase(2);
-        }
-
-        if (currentDateUTC - targetDateUTC >= (48 * 60 * 60 * 1000) + (30 * 60 * 1000)) {
-            setPhase(3);
-        }
-
-    }, [timeLeft])
+    const checkDisable = () => {
+        return phase === 1 && curBuy >= 1 || phase == 2 && curBuy >= 2 || phase == 3 && curBuy >= 10 || phase != 3 && !isWl || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && !isKol || phase != 1 && isKol || totalraise >= 700
+            ? true : false
+    }
 
     return (
         <>
@@ -321,7 +441,7 @@ const SendSolForm = () => {
                             <p>Lizard Presale</p>
                             <p>Symbol: $LIZA</p>
                             <p>Supply: 1,000,000,000 $LIZA</p>
-                            <p>Hardcap: 1000 SOL</p>
+                            <p>Hardcap: 700 SOL</p>
                         </div>
                     </div>
                 </div>
@@ -352,11 +472,11 @@ const SendSolForm = () => {
 
                     <div className='totalraise'>
                         <div className='total'>
-                            <div className='totalraiseinfo'>Your Bought: {formatString(curBuy)} / {phase === 1 ? 1 : phase === 2 ? 3 : 15} SOL</div>
-                            <div className='totalraiseinfo'>Total Raised: {formatString(totalraise)} / 1000 SOL</div>
+                            <div className='totalraiseinfo'>Your Bought: {formatString(curBuy)} / {phase === 1 ? 1 : phase === 2 ? 2 : 10} SOL</div>
+                            <div className='totalraiseinfo'>Total Raised: {formatString(totalraise)} / 700 SOL</div>
                         </div>
                         <div className='chart'>
-                            <div style={{ clipPath: `polygon(0 0, ${(totalraise / 1000) * 100}% 0, ${(totalraise / 1000) * 100}% 100%, 0 100%)` }} className='chartstatus'></div>
+                            <div style={{ clipPath: `polygon(0 0, ${(totalraise / 700) * 100}% 0, ${(totalraise / 700) * 100}% 100%, 0 100%)` }} className='chartstatus'></div>
                         </div>
                     </div>
                     <form onSubmit={sendSol} className='raiseForm'>
@@ -364,22 +484,22 @@ const SendSolForm = () => {
                         <input
                             className="slider"
                             type="range"
-                            max={phase === 1 ? 1 : phase === 2 ? 3 : 15}
-                            min={1}
+                            max={parseFloat(marks[marks.length - 1].label)}
+                            min={parseFloat(marks[0].label)}
                             step={phase === 1 ? 1 : phase === 2 ? 0.5 : 1}
                             value={sliderValue}
                             onChange={handleSliderChange}
                         />
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontFamily: 'MemeFont2' }}>
-                            {marks.map((mark) => (
+                            {marks?.map((mark) => (
                                 <div style={{ color: 'black', width: '21px', height: '21px', textAlign: 'center' }} key={mark.value}>{mark.label}</div>
                             ))}
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                            <p>Min: {marks[0].label} SOL</p>
-                            <p>Max: {marks[marks.length - 1].label} SOL</p>
+                            <p>Min: {marks?.[0].label} SOL</p>
+                            <p>Max: {marks?.[marks.length - 1].label} SOL</p>
                         </div>
-                        <button disabled={!isWl || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && !isKol} type='submit'> {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
+                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
             </div >

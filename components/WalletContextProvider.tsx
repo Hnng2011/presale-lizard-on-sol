@@ -8,7 +8,7 @@ require('@solana/wallet-adapter-react-ui/styles.css');
 
 
 const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const network = WalletAdapterNetwork.Mainnet;
+    const network = WalletAdapterNetwork.Devnet;
     const endpoint = web3.clusterApiUrl(network);
     const wallets = useMemo(
         () => [
@@ -19,7 +19,7 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     );
 
     return (
-        <ConnectionProvider endpoint={'https://powerful-distinguished-sunset.solana-mainnet.quiknode.pro/fa032f5143d73df4c986c3f3465512c5e77bc40b/?fbclid=IwAR2OAP-wnEr2EMkkMq_sOx-l9nfb2bC_IOgHZJXzcsceNJetInqsbvBoPBA' || endpoint}>
+        <ConnectionProvider endpoint={'https://powerful-distinguished-sunset.solana-mainnet.quiknode.pro/fa032f5143d73df4c986c3f3465512c5e77bc40b/?fbclid=IwAR2OAP-wnEr2EMkkMq_sOx-l9nfb2bC_IOgHZJXzcsceNJetInqsbvBoPBA'}>
             <WalletProvider wallets={wallets} autoConnect={true}>
                 <WalletModalProvider>
                     {children}
