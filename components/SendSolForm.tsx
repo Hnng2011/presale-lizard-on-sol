@@ -23,6 +23,10 @@ const SendSolForm = () => {
         const targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as string}`).getTime();
         const currentDateUTC = new Date().getTime();
 
+        if (currentDateUTC - targetDateUTC >= (73 * 60 * 60 * 1000)) {
+            return 4;
+        }
+
         if (currentDateUTC - targetDateUTC >= (48 * 60 * 60 * 1000) + (30 * 60 * 1000)) {
             return 3;
         }
@@ -67,7 +71,7 @@ const SendSolForm = () => {
                     }
                     return marks;
                 }
-            } else if (phase === 3) {
+            } else if (phase === 3 || phase === 4) {
                 const curLeft = 10 - curBuy;
                 if (curLeft === 10) {
                     return [
@@ -94,8 +98,6 @@ const SendSolForm = () => {
                     }
                     return marks;
                 }
-            } else {
-                return [{ value: 1, label: '1' }]
             }
         };
         const generateMarkss = generateMarks(phase, curBuy);
@@ -145,23 +147,15 @@ const SendSolForm = () => {
     const sendSol = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (phase != 3 && !isWl) {
-            console.log('You are not WL , please do not try to send transaction.');
-            setNoti({ detail: 'You are not WL , please do not try to send transaction.', status: 'failed' })
+        if (timeLeft.status === 'close' || timeLeft.status === 'upcoming') {
+            setNoti({ detail: 'Not time for minting.', status: 'failed' })
             return
         }
 
-        else if (timeLeft.status === 'close' || timeLeft.status === 'upcoming') {
-            console.log('Not time for minting yet.');
-            setNoti({ detail: 'Not time for minting yet.', status: 'failed' })
-            return
-        }
-
-        else if (phase === 1 && !isKol || phase != 1 && isKol) {
+        else if (phase === 1 && !isKol || phase != 1 && isKol || phase != 4 && !isWl) {
             setNoti({ detail: 'You don\'t have permission in this round', status: 'failed' })
             return
         }
-
 
         setLoading(true)
         if (!connection || !publicKey) {
@@ -346,6 +340,10 @@ const SendSolForm = () => {
             targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`);
             targetDateUTC = new Date(targetDateUTC.getTime() + (49 * 60 * 60 * 1000));
             endDateUTC = new Date(targetDateUTC.getTime() + (24 * 60 * 60 * 1000));
+        } else if (phase == 4) {
+            targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`);
+            targetDateUTC = new Date(targetDateUTC.getTime() + (73 * 60 * 60 * 1000) + (30 * 60 * 1000));
+            endDateUTC = new Date(targetDateUTC.getTime() + (24 * 60 * 60 * 1000));
         }
 
         const calculateTimeLeft = (): { days: number; hours: number; minutes: number; seconds: number, status: string } => {
@@ -408,7 +406,7 @@ const SendSolForm = () => {
     }, [generatedMarks]);
 
     const checkDisable = () => {
-        return phase === 1 && curBuy >= 1 || phase == 2 && curBuy >= 2 || phase == 3 && curBuy >= 10 || phase != 3 && !isWl || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && !isKol || phase != 1 && isKol || totalraise >= 700
+        return phase == 1 && curBuy >= 1 || phase == 2 && curBuy >= 2 || (phase == 3 || phase == 4) && curBuy >= 10 || phase != 4 && !isWl || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && !isKol || phase != 1 && isKol || totalraise >= 700
             ? true : false
     }
 
@@ -456,7 +454,7 @@ const SendSolForm = () => {
                     </div>
 
                     <div className='round'>
-                        <h2 className='currentround'>{phase === 1 ? 'Whitelist T1' : phase === 2 ? 'Guarantee Round' : 'NFT Holder FCFS'}</h2>
+                        <h2 className='currentround'>{phase === 1 ? 'Whitelist T1' : phase === 2 ? 'Guarantee Round' : phase === 3 ? 'NFT Holder FCFS' : 'Public Round'}</h2>
                         <h3 className='status' style={{ backgroundColor: `${timeLeft.status === 'upcoming' ? 'blue' : timeLeft.status === 'open' ? 'green' : 'red'}` }}>{timeLeft.status === 'upcoming' ? 'Upcoming' : timeLeft.status === 'open' ? 'Open' : 'Closed'}</h3>
                     </div>
 
@@ -501,7 +499,7 @@ const SendSolForm = () => {
                             <p>Min: {marks?.[0]?.label} SOL</p>
                             <p>Max: {marks?.[marks?.length - 1]?.label} SOL</p>
                         </div>
-                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (isWl || phase === 3) ? 'Contribute' : 'You are not WL'} </button>
+                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (isWl || phase === 4) ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
             </div >
