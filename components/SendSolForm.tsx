@@ -23,12 +23,12 @@ const SendSolForm = () => {
         const targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as string}`).getTime();
         const currentDateUTC = new Date().getTime();
 
-        if (currentDateUTC - targetDateUTC >= 24 * 60 * 60 * 1000) {
-            return 2;
-        }
-
         if (currentDateUTC - targetDateUTC >= (48 * 60 * 60 * 1000) + (30 * 60 * 1000)) {
             return 3;
+        }
+
+        if (currentDateUTC - targetDateUTC >= 24 * 60 * 60 * 1000) {
+            return 2;
         }
 
         return 1;
@@ -501,7 +501,7 @@ const SendSolForm = () => {
                             <p>Min: {marks?.[0]?.label} SOL</p>
                             <p>Max: {marks?.[marks?.length - 1]?.label} SOL</p>
                         </div>
-                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
+                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (isWl || phase === 3) ? 'Contribute' : 'You are not WL'} </button>
                     </form>
                 </div>
             </div >
