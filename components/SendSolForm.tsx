@@ -3,7 +3,7 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { ChangeEvent, useEffect, useState, useMemo } from 'react'
+import { ChangeEvent, useEffect, useState, useMemo, useCallback } from 'react'
 import NavBar from './NavBar';
 
 const SendSolForm = () => {
@@ -36,13 +36,12 @@ const SendSolForm = () => {
     const generatedMarks = useMemo(() => {
         const generateMarks = (phase: number, curBuy: number) => {
             if (phase === 1) {
-                const curLeft = 2 - curBuy;
+                const curLeft = 1 - curBuy;
 
                 if (curLeft === 1) {
-                    return [
-                        { value: 1, label: '1' }
-                    ];
+                    return [{ value: 1, label: '1' }];
                 }
+
                 else if (curLeft === 0) {
                     return [
                         { value: 1, label: '0' },
@@ -68,7 +67,7 @@ const SendSolForm = () => {
                     }
                     return marks;
                 }
-            } else {
+            } else if (phase === 3) {
                 const curLeft = 10 - curBuy;
                 if (curLeft === 10) {
                     return [
@@ -95,10 +94,14 @@ const SendSolForm = () => {
                     }
                     return marks;
                 }
+            } else {
+                return [{ value: 1, label: '1' }]
             }
         };
+        const generateMarkss = generateMarks(phase, curBuy);
 
-        return generateMarks(phase, curBuy);
+        return generateMarkss;
+
     }, [phase, curBuy]);
 
 
@@ -400,9 +403,8 @@ const SendSolForm = () => {
     }, [phase]);
 
     useEffect(() => {
-        const generate = generatedMarks ?? [];
-        setMarks(generate as { value: number; label: string; }[]);
-        setSliderValue(parseFloat(generate[0]?.label));
+        setMarks(generatedMarks as { value: number; label: string; }[]);
+        setSliderValue(parseFloat(generatedMarks?.[0].label ?? '0'));
     }, [generatedMarks]);
 
     const checkDisable = () => {
@@ -484,8 +486,8 @@ const SendSolForm = () => {
                         <input
                             className="slider"
                             type="range"
-                            max={parseFloat(marks[marks.length - 1].label)}
-                            min={parseFloat(marks[0].label)}
+                            max={parseFloat(marks?.[marks?.length - 1]?.label)}
+                            min={parseFloat(marks?.[0]?.label)}
                             step={phase === 1 ? 1 : phase === 2 ? 0.5 : 1}
                             value={sliderValue}
                             onChange={handleSliderChange}
@@ -496,8 +498,8 @@ const SendSolForm = () => {
                             ))}
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                            <p>Min: {marks?.[0].label} SOL</p>
-                            <p>Max: {marks?.[marks.length - 1].label} SOL</p>
+                            <p>Min: {marks?.[0]?.label} SOL</p>
+                            <p>Max: {marks?.[marks?.length - 1]?.label} SOL</p>
                         </div>
                         <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : isWl ? 'Contribute' : 'You are not WL'} </button>
                     </form>
