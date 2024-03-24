@@ -499,8 +499,7 @@ const SendSolForm = () => {
                         <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (role === 'kol' && phase === 1 || role === 'wl' || phase === 4 && role != 'kol') ? 'Contribute' : 'Ineligible'} </button>
                     </form>
                 </div>
-            </div >
-
+            </div>
         </>
     )
 
