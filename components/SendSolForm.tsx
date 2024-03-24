@@ -151,7 +151,7 @@ const SendSolForm = () => {
             return
         }
 
-        else if (phase === 1 && role != 'kol' || phase !== 1 && role === 'kol' || phase !== 4 && role != 'wl') {
+        else if (phase === 1 && role != 'kol' || phase !== 1 && role === 'kol' || phase !== 4 && role != 'wl' && role != 'kol') {
             setNoti({ detail: 'You don\'t have permission in this round', status: 'failed' })
             return
         }
