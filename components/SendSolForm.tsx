@@ -9,8 +9,8 @@ import NavBar from './NavBar';
 const SendSolForm = () => {
     const [noti, setNoti] = useState<{ detail: string, status: string } | null>(null)
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, status: 'close' });
-    const [isWl, setWL] = useState(false)
-    const [isKol, setKOL] = useState(false)
+    const [role, setRole] = useState('')
+    const [bonus, setBonus] = useState(0)
     const [curBuy, setCurBuy] = useState(0)
     const [totalraise, setTotalRaise] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -46,7 +46,7 @@ const SendSolForm = () => {
                     return [{ value: 1, label: '1' }];
                 }
 
-                else if (curLeft === 0) {
+                else if (curLeft <= 0) {
                     return [
                         { value: 1, label: '0' },
                     ];
@@ -59,7 +59,7 @@ const SendSolForm = () => {
                         { value: 2, label: '1.5' },
                         { value: 3, label: '2' },
                     ];
-                } else if (curLeft === 0) {
+                } else if (curLeft <= 0) {
                     return [
                         { value: 1, label: '0' },
                     ];
@@ -86,7 +86,7 @@ const SendSolForm = () => {
                         { value: 9, label: '9' },
                         { value: 10, label: '10' },
                     ];
-                } else if (curLeft === 0) {
+                } else if (curLeft <= 0) {
                     return [
                         { value: 1, label: '0' },
                     ];
@@ -116,12 +116,11 @@ const SendSolForm = () => {
     const postRef = () => {
         const postData = {
             address: publicKey?.toBase58(),
-            ref: new URL(window.location.href).searchParams.get('ref'),
+            ref: new URL(window.location.href).searchParams.get('ref') || '',
         };
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL as String}/ref`;
 
-        if (postData.ref && postData.address && postData.ref !== postData.address) {
-            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL as String}/ref`;
-
+        if (postData.address !== postData.ref) {
             fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -152,7 +151,7 @@ const SendSolForm = () => {
             return
         }
 
-        else if (phase === 1 && !isKol || phase != 1 && isKol || phase != 4 && !isWl) {
+        else if (phase === 1 && role != 'kol' || phase !== 1 && role === 'kol' || phase !== 4 && role != 'wl') {
             setNoti({ detail: 'You don\'t have permission in this round', status: 'failed' })
             return
         }
@@ -226,14 +225,13 @@ const SendSolForm = () => {
                 });
 
                 if (!wl.ok) {
-                    setWL(false);
                     throw new Error(`HTTP error! Status: ${wl.status}`);
                 }
 
                 const wlData = await wl.json();
                 setCurBuy(wlData.currentbuy || 0);
-                setKOL(Boolean(wlData.isKOL));
-                setWL(wlData.address || false);
+                setRole(wlData.Role || '');
+                setBonus(wlData.bonus || 0);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -255,14 +253,13 @@ const SendSolForm = () => {
                 });
 
                 if (!wl.ok) {
-                    setWL(false);
                     throw new Error(`HTTP error! Status: ${wl.status}`);
                 }
 
                 const wlData = await wl.json();
                 setCurBuy(wlData.currentbuy || 0);
-                setKOL(Boolean(wlData.isKOL));
-                setWL(wlData.address || false);
+                setRole(wlData.role || '');
+                setBonus(wlData.bonus || 0);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -406,13 +403,13 @@ const SendSolForm = () => {
     }, [generatedMarks]);
 
     const checkDisable = () => {
-        return phase == 1 && curBuy >= 1 || phase == 2 && curBuy >= 2 || (phase == 3 || phase == 4) && curBuy >= 10 || phase != 4 && !isWl || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && !isKol || phase != 1 && isKol || totalraise >= 700
+        return phase == 1 && curBuy >= 1 || phase == 2 && curBuy >= 2 || (phase == 3 || phase == 4) && curBuy >= 10 || phase != 4 && role !== 'wl' || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && role !== 'kol' || phase != 1 && role === 'kol' || totalraise >= 700
             ? true : false
     }
 
     return (
         <>
-            <NavBar setStateFunction={setNoti} />
+            <NavBar setStateFunction={setNoti} bonus={bonus} />
             <div className='notistack'>
                 {noti?.status === 'success' ? <a target='_blank' href={`https://solscan.io/tx/${noti?.detail}`}><div className='noti' style={{ wordBreak: 'break-all' }}>{'Done.'} <br /> {'TX: '}{noti?.detail}</div></a> : noti?.status === 'failed' ? <div className='noti' style={{ color: 'white', backgroundColor: 'red' }}>{'Failed.'} <br /> {noti?.detail}</div> : noti?.status === 'copy' ? <div className='noti' style={{ width: 'fit-content' }}>{'Copied to Clipboard.'}</div> : null}
             </div>
@@ -499,7 +496,7 @@ const SendSolForm = () => {
                             <p>Min: {marks?.[0]?.label} SOL</p>
                             <p>Max: {marks?.[marks?.length - 1]?.label} SOL</p>
                         </div>
-                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (isWl || phase === 4) ? 'Contribute' : 'You are not WL'} </button>
+                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (role === 'wl' || phase === 4 && role != 'kol') ? 'Contribute' : 'Ineligible'} </button>
                     </form>
                 </div>
             </div >

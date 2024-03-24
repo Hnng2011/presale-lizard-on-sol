@@ -11,10 +11,11 @@ const ReactUIWalletMultiButtonDynamic = dynamic(
 type SetStateFunction<T> = Dispatch<SetStateAction<T>>;
 
 interface NavBarProps {
-    setStateFunction: SetStateFunction<any>; // You can replace `any` with the specific type you're using for state
+    setStateFunction: SetStateFunction<any>;
+    bonus: number; // You can replace `any` with the specific type you're using for state
 }
 
-const NavBar: FC<NavBarProps> = ({ setStateFunction }) => {
+const NavBar: FC<NavBarProps> = ({ setStateFunction, bonus }) => {
     const { publicKey } = useWallet();
 
     function ref_Button_Click() {
@@ -25,6 +26,7 @@ const NavBar: FC<NavBarProps> = ({ setStateFunction }) => {
 
     return (
         <div className="navbar">
+            {publicKey && <button className="ref_button" > Your REWARDS: {bonus} SOL</button>}
             {publicKey && <button className="ref_button" onClick={() => ref_Button_Click()}> Get REF LINK</button>}
             {/* Pass setStateFunction as a prop */}
             <ReactUIWalletMultiButtonDynamic />
