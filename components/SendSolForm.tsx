@@ -340,7 +340,7 @@ const SendSolForm = () => {
         } else if (phase == 4) {
             targetDateUTC = new Date(`${process.env.NEXT_PUBLIC_START_DATE as String}`);
             targetDateUTC = new Date(targetDateUTC.getTime() + (73 * 60 * 60 * 1000) + (30 * 60 * 1000));
-            endDateUTC = new Date(targetDateUTC.getTime() + (24 * 60 * 60 * 1000));
+            endDateUTC = new Date(targetDateUTC.getTime() + (16 * 60 * 60 * 1000));
         }
 
         const calculateTimeLeft = (): { days: number; hours: number; minutes: number; seconds: number, status: string } => {
