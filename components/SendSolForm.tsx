@@ -496,7 +496,7 @@ const SendSolForm = () => {
                             <p>Min: {marks?.[0]?.label} SOL</p>
                             <p>Max: {marks?.[marks?.length - 1]?.label} SOL</p>
                         </div>
-                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (role === 'wl' || phase === 4 && role != 'kol') ? 'Contribute' : 'Ineligible'} </button>
+                        <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (role === 'kol' && phase === 1 || role === 'wl' || phase === 4 && role != 'kol') ? 'Contribute' : 'Ineligible'} </button>
                     </form>
                 </div>
             </div >
