@@ -151,7 +151,7 @@ const SendSolForm = () => {
             return
         }
 
-        else if (phase === 1 && role != 'kol' || phase !== 1 && role === 'kol' || phase !== 4 && role != 'wl' && role != 'kol') {
+        else if (phase === 1 && role != 'kol' || phase !== 1 && role === 'kol' || (phase === 2 || phase === 3) && role !== 'wl') {
             setNoti({ detail: 'You don\'t have permission in this round', status: 'failed' })
             return
         }
@@ -403,7 +403,7 @@ const SendSolForm = () => {
     }, [generatedMarks]);
 
     const checkDisable = () => {
-        return phase == 1 && curBuy >= 1 || phase == 2 && curBuy >= 2 || (phase == 3 || phase == 4) && curBuy >= 10 || phase !== 4 && role !== 'wl' && role !== 'kol' || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && role !== 'kol' || phase !== 1 && role === 'kol' || totalraise >= 700
+        return phase === 1 && curBuy >= 1 || phase === 2 && curBuy >= 2 || (phase === 3 || phase === 4) && curBuy >= 10 || (phase === 2 || phase === 3) && role !== 'wl' || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && role !== 'kol' || phase !== 1 && role === 'kol' || totalraise >= 700
             ? true : false
     }
 
