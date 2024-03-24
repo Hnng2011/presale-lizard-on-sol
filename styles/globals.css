@@ -459,9 +459,18 @@ input[type="range"] {
 }
 
 @media screen and (max-width: 768px) {
+    .ref_button {
+        font-size: 0.6rem;
+    }
+
+
+    .container {
+        height: fit-content !important;
+    }
 
     .notistack {
         width: 70%;
+        pointer-events: none;
     }
 
     .inform h3 {
