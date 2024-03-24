@@ -470,7 +470,7 @@ const SendSolForm = () => {
                     <div className='totalraise'>
                         <div className='total'>
                             <div className='totalraiseinfo'>Your Bought: {formatString(curBuy)} / {phase === 1 ? 1 : phase === 2 ? 2 : 10} SOL</div>
-                            <div className='totalraiseinfo'>Total Raised: {formatString(totalraise)} / 700 SOL</div>
+                            <div className='totalraiseinfo'>Total Raised: {formatString(totalraise)} SOL</div>
                         </div>
                         <div className='chart'>
                             <div style={{ clipPath: `polygon(0 0, ${(totalraise / 700) * 100}% 0, ${(totalraise / 700) * 100}% 100%, 0 100%)` }} className='chartstatus'></div>
