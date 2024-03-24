@@ -432,7 +432,7 @@ const SendSolForm = () => {
                         </div>
                         <div className='address'>
                             <h3>Token Address: </h3>
-                            <p>TBA</p>
+                            <p>HDmpajbL7cvyB8FQSm51H8VrjCD7vc1R72r8Uei79iA</p>
                         </div>
                         <div className='about'>
                             <p>

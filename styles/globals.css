@@ -459,6 +459,15 @@ input[type="range"] {
 }
 
 @media screen and (max-width: 768px) {
+    .address h3 {
+        font-size: 1rem !important;
+    }
+
+    .address p {
+        font-size: 0.8rem;
+        word-break: break-all;
+    }
+
     .ref_button {
         font-size: 0.6rem;
     }
