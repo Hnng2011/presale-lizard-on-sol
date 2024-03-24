@@ -403,9 +403,11 @@ const SendSolForm = () => {
     }, [generatedMarks]);
 
     const checkDisable = () => {
-        return phase == 1 && curBuy >= 1 || phase == 2 && curBuy >= 2 || (phase == 3 || phase == 4) && curBuy >= 10 || phase != 4 && role !== 'wl' || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && role !== 'kol' || phase != 1 && role === 'kol' || totalraise >= 700
+        return phase == 1 && curBuy >= 1 || phase == 2 && curBuy >= 2 || (phase == 3 || phase == 4) && curBuy >= 10 || phase !== 4 && role !== 'wl' && role !== 'kol' || loading || timeLeft.status === 'close' || timeLeft.status === 'upcoming' || phase === 1 && role !== 'kol' || phase !== 1 && role === 'kol' || totalraise >= 700
             ? true : false
     }
+
+
 
     return (
         <>
