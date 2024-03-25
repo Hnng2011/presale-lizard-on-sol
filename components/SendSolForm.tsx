@@ -411,7 +411,8 @@ const SendSolForm = () => {
 
     return (
         <>
-            <NavBar setStateFunction={setNoti} bonus={bonus} />
+            <h2 className='currentround'>Presale Ended</h2>
+            {/* <NavBar setStateFunction={setNoti} bonus={bonus} />
             <div className='notistack'>
                 {noti?.status === 'success' ? <a target='_blank' href={`https://solscan.io/tx/${noti?.detail}`}><div className='noti' style={{ wordBreak: 'break-all' }}>{'Done.'} <br /> {'TX: '}{noti?.detail}</div></a> : noti?.status === 'failed' ? <div className='noti' style={{ color: 'white', backgroundColor: 'red' }}>{'Failed.'} <br /> {noti?.detail}</div> : noti?.status === 'copy' ? <div className='noti' style={{ width: 'fit-content' }}>{'Copied to Clipboard.'}</div> : null}
             </div>
@@ -501,7 +502,7 @@ const SendSolForm = () => {
                         <button disabled={checkDisable()} type='submit' > {loading ? 'Funding...' : (role === 'kol' && phase === 1 || role === 'wl' || phase === 4 && role != 'kol') ? 'Contribute' : 'Ineligible'} </button>
                     </form>
                 </div>
-            </div>
+            </div> */}
         </>
     )
 
